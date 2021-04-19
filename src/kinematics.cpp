@@ -2,7 +2,6 @@
 #include<cmath>
 #include<iostream>
 #include<fstream>
-#include <corecrt_math_defines.h>
 
 
 extern double input_angle[10];
@@ -228,33 +227,33 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     double k = -z_c / y_c;
     theta1 = atan(k);
 
-    if (theta1 > 0 && theta1 < M_PI / 2)
+    if (theta1 > 0 && theta1 < PI / 2)
     {
-        q1 = M_PI / 2 - theta1;
+        q1 = PI / 2 - theta1;
     }
     else if (theta1 == 0)
     {
         if (z > 0)
         {
-            q1 = -M_PI / 2;
+            q1 = -PI / 2;
         }
         else if (z < 0)
         {
-            q1 = M_PI / 2;
+            q1 = PI / 2;
         }
     }
-    else if (theta1 > -M_PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2 && theta1 < 0)
     {
-        q1 = -theta1 - M_PI / 2;
+        q1 = -theta1 - PI / 2;
     }
-    else if (theta1 == M_PI / 2 || theta1 == -M_PI / 2)
+    else if (theta1 == PI / 2 || theta1 == -PI / 2)
     {
         q1 = 0;
     }
 
     //-----q2-----
     //判断末端在交线的左边，还是右边
-    if (theta1 > 0 && theta1 < M_PI / 2)
+    if (theta1 > 0 && theta1 < PI / 2)
     {
         if (y - k > 0)
         {
@@ -271,7 +270,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     }
     else if (theta1 == 0)
     {
-        if (q1 == M_PI / 2)
+        if (q1 == PI / 2)
         {
             if (y > 0)
             {
@@ -286,7 +285,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
                 q2 = 0;
             }
         }
-        else if (q1 == -M_PI / 2)
+        else if (q1 == -PI / 2)
         {
             if (y > 0)
             {
@@ -302,7 +301,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             }
         }
     }
-    else if (theta1 > -M_PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2 && theta1 < 0)
     {
         if (y - k > 0)
         {
@@ -317,7 +316,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             q2 = 0;
         }
     }
-    else if (theta1 == M_PI / 2 || theta1 == -M_PI / 2)
+    else if (theta1 == PI / 2 || theta1 == -PI / 2)
     {
         if (z > 0)
         {
@@ -336,7 +335,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     //求q2
     if (i == 1)
     {
-        if (theta1 > 0 && theta1 < M_PI / 2)
+        if (theta1 > 0 && theta1 < PI / 2)
         {
             a_nop = theta1 - theta2;
         }
@@ -344,7 +343,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         {
             a_nop = theta2;
         }
-        else if (theta1 > -M_PI / 2 && theta1 < 0)
+        else if (theta1 > -PI / 2 && theta1 < 0)
         {
             if (z > 0)
             {
@@ -352,16 +351,16 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             }
             else if (z < 0)
             {
-                a_nop = M_PI + theta1 - theta2;
+                a_nop = PI + theta1 - theta2;
             }
             else if (z == 0)
             {
-                a_nop = M_PI / 2 + theta1;
+                a_nop = PI / 2 + theta1;
             }
         }
-        else if (theta1 == M_PI / 2)
+        else if (theta1 == PI / 2)
         {
-            a_nop = M_PI / 2 - theta2;
+            a_nop = PI / 2 - theta2;
         }
 
         l_np = l_no * sin(a_nop);
@@ -369,31 +368,31 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
         if (x > 0)
         {
-            q2 = M_PI / 2 - a_mpn;
+            q2 = PI / 2 - a_mpn;
         }
         else if (x < 0)
         {
-            q2 = -(M_PI / 2 - a_mpn);
+            q2 = -(PI / 2 - a_mpn);
         }
         else if (x == 0)
         {
             if (c > 0)
             {
-                q2 = M_PI / 2;
+                q2 = PI / 2;
             }
             else if (c < 0)
             {
-                q2 = -M_PI / 2;
+                q2 = -PI / 2;
             }
         }
     }
     else if (i == 0)
     {
-        if (theta1 > 0 && theta1 < M_PI / 2)
+        if (theta1 > 0 && theta1 < PI / 2)
         {
             if (z > 0)
             {
-                a_nop = M_PI - theta1 - theta2;
+                a_nop = PI - theta1 - theta2;
             }
             else if (z < 0)
             {
@@ -401,20 +400,20 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             }
             else if (z == 0)
             {
-                a_nop = M_PI / 2 - theta2;
+                a_nop = PI / 2 - theta2;
             }
         }
         else if (theta1 == 0)
         {
             a_nop = theta2;
         }
-        else if (theta1 > -M_PI / 2 && theta1 < 0)
+        else if (theta1 > -PI / 2 && theta1 < 0)
         {
             a_nop = theta1 + theta2;
         }
-        else if (theta1 == M_PI / 2)
+        else if (theta1 == PI / 2)
         {
-            a_nop = M_PI / 2 - theta2;
+            a_nop = PI / 2 - theta2;
         }
 
         l_np = l_no * sin(a_nop);
@@ -422,21 +421,21 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
         if (x > 0)
         {
-            q2 = -(M_PI / 2 - a_mpn);
+            q2 = -(PI / 2 - a_mpn);
         }
         else if (x < 0)
         {
-            q2 = M_PI / 2 - a_mpn;
+            q2 = PI / 2 - a_mpn;
         }
         else if (x == 0)
         {
             if (c > 0)
             {
-                q2 = -M_PI / 2;
+                q2 = -PI / 2;
             }
             else if (c < 0)
             {
-                q2 = M_PI / 2;
+                q2 = PI / 2;
             }
         }
     }
@@ -468,25 +467,25 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     l_il = l_im * cos(a_lim);
     theta2 = acos(abs(z) / l_no);
 
-    if (abs(theta1) == M_PI / 2)
+    if (abs(theta1) == PI / 2)
     {
         if (b > 0)
         {
-            if (a_eij + a_lim > M_PI / 2)
+            if (a_eij + a_lim > PI / 2)
             {
-                a_eik = M_PI - a_eij - a_lim;
+                a_eik = PI - a_eij - a_lim;
                 l_ik = kLEI * cos(a_eik);
                 l_ek = kLEI * sin(a_eik);
 
                 x1 = x0 - l_ik - l_il;
                 y1 = y0 - l_lm + l_ek;
             }
-            else if (a_eij + a_lim == M_PI / 2)
+            else if (a_eij + a_lim == PI / 2)
             {
                 x1 = x0 - l_il;
                 y1 = y0 - l_lm + kLEI;
             }
-            else if (a_eij + a_lim < M_PI / 2)
+            else if (a_eij + a_lim < PI / 2)
             {
                 a_eik = a_eij + a_lim;
                 l_ik = kLEI * cos(a_eik);
@@ -513,21 +512,21 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     }
     else if (-k * c < b)
     {
-        if (a_eij + a_lim > M_PI / 2)
+        if (a_eij + a_lim > PI / 2)
         {
-            a_eik = M_PI - a_eij - a_lim;
+            a_eik = PI - a_eij - a_lim;
             l_ik = kLEI * cos(a_eik);
             l_ek = kLEI * sin(a_eik);
 
             x1 = x0 - l_ik - l_il;
             y1 = y0 - l_lm + l_ek;
         }
-        else if (a_eij + a_lim == M_PI / 2)
+        else if (a_eij + a_lim == PI / 2)
         {
             x1 = x0 - l_il;
             y1 = y0 - l_lm + kLEI;
         }
-        else if (a_eij + a_lim < M_PI / 2)
+        else if (a_eij + a_lim < PI / 2)
         {
             a_eik = a_eij + a_lim;
             l_ik = kLEI * cos(a_eik);
@@ -579,12 +578,12 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         a_daf = a_bad - a_bae - a_eaf;
     }
 
-    q3 = M_PI - a_daf - kQ30;
+    q3 = PI - a_daf - kQ30;
 
     //-----q4-----
     a_adc = acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
 
-    q4 = a_adc - 3.0 / 4.0 * M_PI;
+    q4 = a_adc - 3.0 / 4.0 * PI;
 
     //-----q5-----
     //求∠GEI
@@ -628,15 +627,15 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     {
         if (a_aeb > a_bec)
         {
-            theta3 = M_PI / 2 - (a_aeb - a_bec);
+            theta3 = PI / 2 - (a_aeb - a_bec);
         }
         else if (a_aeb == a_bec)
         {
-            theta3 = M_PI / 2;
+            theta3 = PI / 2;
         }
         else if (a_aeb < a_bec)
         {
-            theta3 = M_PI / 2 - (a_aeb - a_bec);
+            theta3 = PI / 2 - (a_aeb - a_bec);
         }
 
         if (a_lim == 0)
@@ -657,7 +656,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     }
     else if (x1 < 0)
     {
-        theta3 = M_PI - a_aef - a_aeb + a_bec;
+        theta3 = PI - a_aef - a_aeb + a_bec;
 
         if (a_lim == 0)
         {
@@ -770,33 +769,33 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     double k = -z_c / y_c;
     theta1 = std::atan(k);
 
-    if (theta1 > 0 && theta1 < M_PI / 2)
+    if (theta1 > 0 && theta1 < PI / 2)
     {
-        q1 = M_PI / 2 - theta1;
+        q1 = PI / 2 - theta1;
     }
     else if (theta1 == 0)
     {
         if (z > 0)
         {
-            q1 = -M_PI / 2;
+            q1 = -PI / 2;
         }
         else if (z < 0)
         {
-            q1 = M_PI / 2;
+            q1 = PI / 2;
         }
     }
-    else if (theta1 > -M_PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2 && theta1 < 0)
     {
-        q1 = -theta1 - M_PI / 2;
+        q1 = -theta1 - PI / 2;
     }
-    else if (theta1 == M_PI / 2 || theta1 == -M_PI / 2)
+    else if (theta1 == PI / 2 || theta1 == -PI / 2)
     {
         q1 = 0;
     }
 
     //-----q2-----
     //判断末端在交线的左边，还是右边
-    if (theta1 > 0 && theta1 < M_PI / 2)
+    if (theta1 > 0 && theta1 < PI / 2)
     {
         if (y - k > 0)
         {
@@ -813,7 +812,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     }
     else if (theta1 == 0)
     {
-        if (q1 == M_PI / 2)
+        if (q1 == PI / 2)
         {
             if (y > 0)
             {
@@ -828,7 +827,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
                 q2 = 0;
             }
         }
-        else if (q1 == -M_PI / 2)
+        else if (q1 == -PI / 2)
         {
             if (y > 0)
             {
@@ -844,7 +843,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
             }
         }
     }
-    else if (theta1 > -M_PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2 && theta1 < 0)
     {
         if (y - k > 0)
         {
@@ -859,7 +858,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
             q2 = 0;
         }
     }
-    else if (theta1 == M_PI / 2 || theta1 == -M_PI / 2)
+    else if (theta1 == PI / 2 || theta1 == -PI / 2)
     {
         if (z > 0)
         {
@@ -878,7 +877,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     //求q2
     if (i == 1)
     {
-        if (theta1 > 0 && theta1 < M_PI / 2)
+        if (theta1 > 0 && theta1 < PI / 2)
         {
             a_nop = theta1 - theta2;
         }
@@ -886,7 +885,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         {
             a_nop = theta2;
         }
-        else if (theta1 > -M_PI / 2 && theta1 < 0)
+        else if (theta1 > -PI / 2 && theta1 < 0)
         {
             if (z > 0)
             {
@@ -894,16 +893,16 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
             }
             else if (z < 0)
             {
-                a_nop = M_PI + theta1 - theta2;
+                a_nop = PI + theta1 - theta2;
             }
             else if (z == 0)
             {
-                a_nop = M_PI / 2 + theta1;
+                a_nop = PI / 2 + theta1;
             }
         }
-        else if (theta1 == M_PI / 2)
+        else if (theta1 == PI / 2)
         {
-            a_nop = M_PI / 2 - theta2;
+            a_nop = PI / 2 - theta2;
         }
 
         l_np = l_no * std::sin(a_nop);
@@ -911,31 +910,31 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
 
         if (x > 0)
         {
-            q2 = M_PI / 2 - a_mpn;
+            q2 = PI / 2 - a_mpn;
         }
         else if (x < 0)
         {
-            q2 = -(M_PI / 2 - a_mpn);
+            q2 = -(PI / 2 - a_mpn);
         }
         else if (x == 0)
         {
             if (c > 0)
             {
-                q2 = M_PI / 2;
+                q2 = PI / 2;
             }
             else if (c < 0)
             {
-                q2 = -M_PI / 2;
+                q2 = -PI / 2;
             }
         }
     }
     else if (i == 0)
     {
-        if (theta1 > 0 && theta1 < M_PI / 2)
+        if (theta1 > 0 && theta1 < PI / 2)
         {
             if (z > 0)
             {
-                a_nop = M_PI - theta1 - theta2;
+                a_nop = PI - theta1 - theta2;
             }
             else if (z < 0)
             {
@@ -943,20 +942,20 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
             }
             else if (z == 0)
             {
-                a_nop = M_PI / 2 - theta2;
+                a_nop = PI / 2 - theta2;
             }
         }
         else if (theta1 == 0)
         {
             a_nop = theta2;
         }
-        else if (theta1 > -M_PI / 2 && theta1 < 0)
+        else if (theta1 > -PI / 2 && theta1 < 0)
         {
             a_nop = theta1 + theta2;
         }
-        else if (theta1 == M_PI / 2)
+        else if (theta1 == PI / 2)
         {
-            a_nop = M_PI / 2 - theta2;
+            a_nop = PI / 2 - theta2;
         }
 
         l_np = l_no * sin(a_nop);
@@ -964,21 +963,21 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
 
         if (x > 0)
         {
-            q2 = -(M_PI / 2 - a_mpn);
+            q2 = -(PI / 2 - a_mpn);
         }
         else if (x < 0)
         {
-            q2 = M_PI / 2 - a_mpn;
+            q2 = PI / 2 - a_mpn;
         }
         else if (x == 0)
         {
             if (c > 0)
             {
-                q2 = -M_PI / 2;
+                q2 = -PI / 2;
             }
             else if (c < 0)
             {
-                q2 = M_PI / 2;
+                q2 = PI / 2;
             }
         }
     }
@@ -1010,25 +1009,25 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     l_il = l_im * std::cos(a_lim);
     theta2 = std::acos(std::abs(z) / l_no);
 
-    if (std::abs(theta1) == M_PI / 2)
+    if (std::abs(theta1) == PI / 2)
     {
         if (b > 0)
         {
-            if (a_eij + a_lim > M_PI / 2)
+            if (a_eij + a_lim > PI / 2)
             {
-                a_eik = M_PI - a_eij - a_lim;
+                a_eik = PI - a_eij - a_lim;
                 l_ik = kLEI * std::cos(a_eik);
                 l_ek = kLEI * std::sin(a_eik);
 
                 x1 = x0 - l_ik - l_il;
                 y1 = y0 - l_lm + l_ek;
             }
-            else if (a_eij + a_lim == M_PI / 2)
+            else if (a_eij + a_lim == PI / 2)
             {
                 x1 = x0 - l_il;
                 y1 = y0 - l_lm + kLEI;
             }
-            else if (a_eij + a_lim < M_PI / 2)
+            else if (a_eij + a_lim < PI / 2)
             {
                 a_eik = a_eij + a_lim;
                 l_ik = kLEI * std::cos(a_eik);
@@ -1055,21 +1054,21 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     }
     else if (-k * c < b)
     {
-        if (a_eij + a_lim > M_PI / 2)
+        if (a_eij + a_lim > PI / 2)
         {
-            a_eik = M_PI - a_eij - a_lim;
+            a_eik = PI - a_eij - a_lim;
             l_ik = kLEI * std::cos(a_eik);
             l_ek = kLEI * std::sin(a_eik);
 
             x1 = x0 - l_ik - l_il;
             y1 = y0 - l_lm + l_ek;
         }
-        else if (a_eij + a_lim == M_PI / 2)
+        else if (a_eij + a_lim == PI / 2)
         {
             x1 = x0 - l_il;
             y1 = y0 - l_lm + kLEI;
         }
-        else if (a_eij + a_lim < M_PI / 2)
+        else if (a_eij + a_lim < PI / 2)
         {
             a_eik = a_eij + a_lim;
             l_ik = kLEI * std::cos(a_eik);
@@ -1121,12 +1120,12 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         a_daf = a_bad - a_bae - a_eaf;
     }
 
-    q3 = M_PI - a_daf - kQ30;
+    q3 = PI - a_daf - kQ30;
 
     //-----q4-----
     a_adc = std::acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
 
-    q4 = a_adc - 3.0 / 4.0 * M_PI;
+    q4 = a_adc - 3.0 / 4.0 * PI;
 
     //-----q5-----
     //求∠GEI
@@ -1170,15 +1169,15 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     {
         if (a_aeb > a_bec)
         {
-            theta3 = M_PI / 2 - (a_aeb - a_bec);
+            theta3 = PI / 2 - (a_aeb - a_bec);
         }
         else if (a_aeb == a_bec)
         {
-            theta3 = M_PI / 2;
+            theta3 = PI / 2;
         }
         else if (a_aeb < a_bec)
         {
-            theta3 = M_PI / 2 - (a_aeb - a_bec);
+            theta3 = PI / 2 - (a_aeb - a_bec);
         }
 
         if (a_lim == 0)
@@ -1199,7 +1198,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     }
     else if (x1 < 0)
     {
-        theta3 = M_PI - a_aef - a_aeb + a_bec;
+        theta3 = PI - a_aef - a_aeb + a_bec;
 
         if (a_lim == 0)
         {
