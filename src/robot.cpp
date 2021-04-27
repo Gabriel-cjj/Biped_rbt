@@ -95,7 +95,7 @@ auto ReadPosition::executeRT()->int
 
     for (int i = 0; i < 10; i++)
     {
-        mout() << begin_angle[i] << "\t\n";
+        mout() << i << " " <<begin_angle[i] << "\t\n";
     }
 
     return 0;
@@ -335,7 +335,7 @@ auto PositionCheck::executeRT()->int
         //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    if (begin_angle[5] < -PI)
+    if (begin_angle[5] > 0)
     {
         begin_angle[5] = begin_angle[5] - 2 * PI;
         controller()->motionPool()[5].setPosOffset(-2 * PI);
@@ -353,7 +353,7 @@ auto PositionCheck::collectNrt()->void {}
 PositionCheck::PositionCheck(const std::string& name)
 {
     aris::core::fromXmlString(command(),
-        "<Command name=\"position_check\"/>");
+        "<Command name=\"check_pos\"/>");
 }
 
 
@@ -370,7 +370,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
 {
     std::unique_ptr<aris::control::Controller> controller(new aris::control::EthercatController);
 
-    for (aris::Size i = 0; i < 10; ++i)
+    for (aris::Size i = 0; i < 9; ++i)
     {
 #ifdef ARIS_USE_ETHERCAT_SIMULATION
         double pos_offset[10]
@@ -497,6 +497,7 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<WalkStep>();
      plan_root->planPool().add<testIK>();
      plan_root->planPool().add<TestMotor>();
+     plan_root->planPool().add<PositionCheck>();
 
 
     return plan_root;
