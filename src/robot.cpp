@@ -310,6 +310,7 @@ testIK::testIK(const std::string& name)
         "<Command name=\"test_ik\"/>");
 }
 
+//修正读数
 auto PositionCheck::prepareNrt()->void
 {
     for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
