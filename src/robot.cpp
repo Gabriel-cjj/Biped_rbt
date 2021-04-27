@@ -245,8 +245,10 @@ TestMotor::TestMotor(const std::string& name)
 {
     aris::core::fromXmlString(command(),
         "<Command name=\"test_motor\">"
+        "<GroupParam>"
         "		<Param name=\"direction\" default=\"0.3\" abbreviation=\"d\"/>"
         "		<Param name=\"motor_number\" default=\"0\" abbreviation=\"m\"/>"
+        "</GroupParam>"
         "</Command>");
 }
 
