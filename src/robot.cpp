@@ -81,7 +81,15 @@ auto ReadPosition::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].targetPos();
         begin_angle[7] = controller()->motionPool()[7].targetPos();
         begin_angle[8] = controller()->motionPool()[8].targetPos();
-        begin_angle[9] = controller()->motionPool()[9].targetPos();
+        //begin_angle[9] = controller()->motionPool()[9].targetPos();
+
+
+        //controller()->motionPool()[0].actualPos();
+        //controller()->motionPool()[0].setPosOffset();
+        //controller()->motionPool();
+
+
+
 
     }
 
@@ -122,7 +130,7 @@ auto WalkStep::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].targetPos();
         begin_angle[7] = controller()->motionPool()[7].targetPos();
         begin_angle[8] = controller()->motionPool()[8].targetPos();
-        begin_angle[9] = controller()->motionPool()[9].targetPos();
+        //begin_angle[9] = controller()->motionPool()[9].targetPos();
     }
 
     TCurve s1(5, 2);
@@ -208,7 +216,7 @@ auto TestMotor::prepareNrt()->void
 }
 auto TestMotor::executeRT()->int
 {
-    static double begin_angle[2];
+    static double begin_angle[10];
 
     if (count() == 1)
     {
@@ -221,7 +229,7 @@ auto TestMotor::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].targetPos();
         begin_angle[7] = controller()->motionPool()[7].targetPos();
         begin_angle[8] = controller()->motionPool()[8].targetPos();
-        begin_angle[9] = controller()->motionPool()[9].targetPos();
+        //begin_angle[9] = controller()->motionPool()[9].targetPos();
     }
 
     TCurve s1(0.016, 0.3);
@@ -302,6 +310,49 @@ testIK::testIK(const std::string& name)
         "<Command name=\"test_ik\"/>");
 }
 
+auto PositionCheck::prepareNrt()->void
+{
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto PositionCheck::executeRT()->int
+{
+    static double begin_angle[10];
+
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+    }
+
+    if (begin_angle[5] < -PI)
+    {
+        begin_angle[5] = begin_angle[5] - 2 * PI;
+        controller()->motionPool()[5].setPosOffset(-2 * PI);
+    }
+
+    if (begin_angle[6]<0) 
+    {
+        begin_angle[6] = begin_angle[6] + 2 * PI;
+        controller()->motionPool()[6].setPosOffset(+2 * PI);
+    }
+
+    return 0;
+}
+auto PositionCheck::collectNrt()->void {}
+PositionCheck::PositionCheck(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"position_check\"/>");
+}
+
 
 
 
@@ -325,9 +376,10 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
             0,0,0,0,0
         };
 #else
+
         double pos_offset[10]
         {
-            
+            0
 
         };
 #endif
@@ -338,23 +390,23 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double max_pos[10]
         {
-            PI + 1000, PI + 1000, PI + 1000, PI + 1000, PI + 1000,
-            PI + 1000, PI + 1000, PI + 1000, PI + 1000, PI + 1000
+            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
+            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0
         };
         double min_pos[10]
         {
-            -PI - 1000, -PI - 1000, -PI - 1000, -PI - 1000, -PI - 1000,
-            -PI - 1000, -PI - 1000, -PI - 1000, -PI - 1000, -PI - 1000
+            -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
+            -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0
         };
         double max_vel[10]
         {
-            3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 
-            3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI, 3300 / 60 * 2 * PI
+            3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 
+            3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI, 3300.0 / 60 * 2 * PI
         };
         double max_acc[10]
         {
-            30000, 30000, 30000, 30000, 30000,  
-            30000, 30000, 30000, 30000, 30000
+            30000.0, 30000.0, 30000.0, 30000.0, 30000.0,
+            30000.0, 30000.0, 30000.0, 30000.0, 30000.0
         };
 
         int phy_id[10]={0,1,2,3,4,5,6,7,8,9};

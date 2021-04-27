@@ -90,6 +90,19 @@ private:
 
 };
 
+class PositionCheck : public aris::core::CloneObject<PositionCheck, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit PositionCheck(const std::string& name = "PositionCheck");
+private:
+
+
+};
+
 
 
     auto createControllerBiped()->std::unique_ptr<aris::control::Controller>;
