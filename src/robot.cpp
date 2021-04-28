@@ -72,16 +72,16 @@ auto ReadPosition::executeRT()->int
 
     if (count() == 1)
     {
-        begin_angle[0] = controller()->motionPool()[0].targetPos();
-        begin_angle[1] = controller()->motionPool()[1].targetPos();
-        begin_angle[2] = controller()->motionPool()[2].targetPos();
-        begin_angle[3] = controller()->motionPool()[3].targetPos();
-        begin_angle[4] = controller()->motionPool()[4].targetPos();
-        begin_angle[5] = controller()->motionPool()[5].targetPos();
-        begin_angle[6] = controller()->motionPool()[6].targetPos();
-        begin_angle[7] = controller()->motionPool()[7].targetPos();
-        begin_angle[8] = controller()->motionPool()[8].targetPos();
-        //begin_angle[9] = controller()->motionPool()[9].targetPos();
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
 
 
         //controller()->motionPool()[0].actualPos();
@@ -121,16 +121,16 @@ auto WalkStep::executeRT()->int
 
     if (count() == 1)
     {
-        begin_angle[0] = controller()->motionPool()[0].targetPos();
-        begin_angle[1] = controller()->motionPool()[1].targetPos();
-        begin_angle[2] = controller()->motionPool()[2].targetPos();
-        begin_angle[3] = controller()->motionPool()[3].targetPos();
-        begin_angle[4] = controller()->motionPool()[4].targetPos();
-        begin_angle[5] = controller()->motionPool()[5].targetPos();
-        begin_angle[6] = controller()->motionPool()[6].targetPos();
-        begin_angle[7] = controller()->motionPool()[7].targetPos();
-        begin_angle[8] = controller()->motionPool()[8].targetPos();
-        //begin_angle[9] = controller()->motionPool()[9].targetPos();
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
     TCurve s1(5, 2);
@@ -220,16 +220,16 @@ auto TestMotor::executeRT()->int
 
     if (count() == 1)
     {
-        begin_angle[0] = controller()->motionPool()[0].targetPos();
-        begin_angle[1] = controller()->motionPool()[1].targetPos();
-        begin_angle[2] = controller()->motionPool()[2].targetPos();
-        begin_angle[3] = controller()->motionPool()[3].targetPos();
-        begin_angle[4] = controller()->motionPool()[4].targetPos();
-        begin_angle[5] = controller()->motionPool()[5].targetPos();
-        begin_angle[6] = controller()->motionPool()[6].targetPos();
-        begin_angle[7] = controller()->motionPool()[7].targetPos();
-        begin_angle[8] = controller()->motionPool()[8].targetPos();
-        //begin_angle[9] = controller()->motionPool()[9].targetPos();
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
     TCurve s1(0.016, 0.3);
@@ -382,8 +382,8 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
 
         double pos_offset[10]
         {
-            0
-
+            0,0,0,0,0,
+            0,0,0,0,0
         };
 #endif
         double pos_factor[10]
