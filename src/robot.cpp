@@ -178,7 +178,7 @@ auto WalkStep::executeRT()->int
         //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    TCurve s1(5, 2);
+    TCurve s1(0.016, 0.3);
     s1.getCurveParam();
     EllipseTrajectory e1(0, 100, 0, s1);
 
@@ -230,11 +230,30 @@ auto WalkStep::executeRT()->int
         lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
     }
 
+    double angle0 = begin_angle[0] + input_angle[3];
+    double angle1 = begin_angle[1] + input_angle[2];
+    double angle2 = begin_angle[2] + input_angle[1];
+    double angle3 = begin_angle[3] + input_angle[0];
+    double angle4 = begin_angle[4] + input_angle[4];
+    double angle5 = begin_angle[5] + input_angle[5];
+    double angle6 = begin_angle[6] + input_angle[6];
+    double angle7 = begin_angle[7] + input_angle[7];
+    double angle8 = begin_angle[8] + input_angle[8];
+    //double angle9 = begin_angle[9] + input_angle[3];
+
+
     //发送电机角度
-    for (int i = 0; i < 10; i++)
-    {
-            controller()->motionPool()[i].setTargetPos(input_angle[i]);
-    }
+    controller()->motionPool()[0].setTargetPos(angle0);
+    controller()->motionPool()[1].setTargetPos(angle1);
+    controller()->motionPool()[2].setTargetPos(angle2);
+    controller()->motionPool()[3].setTargetPos(angle3);
+    controller()->motionPool()[4].setTargetPos(angle4);
+    controller()->motionPool()[5].setTargetPos(angle5);
+    controller()->motionPool()[6].setTargetPos(angle6);
+    controller()->motionPool()[7].setTargetPos(angle7);
+    controller()->motionPool()[8].setTargetPos(angle8);
+    //controller()->motionPool()[9].setTargetPos(input_angle[i]);
+
 
 
 
