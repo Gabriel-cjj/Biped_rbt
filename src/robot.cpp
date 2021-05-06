@@ -178,9 +178,9 @@ auto WalkStep::executeRT()->int
         //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    TCurve s1(0.016, 0.3);
+    TCurve s1(2.0, 4.0);
     s1.getCurveParam();
-    EllipseTrajectory e1(0, 100, 0, s1);
+    EllipseTrajectory e1(0, 100.0, 0, s1);
 
    
 
@@ -457,13 +457,13 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double max_pos[10]
         {
-            PI + 1000.0, PI + 1000.0, 1, 2.1, 1.1,
-            0.5, -2.2, 3.8, 0.6, PI + 1000.0,
+            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
+            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
         };
         double min_pos[10]
         {
-            -PI - 1000.0, -PI - 1000.0, -1.6, -0.3, -0.2,
-            -0.5,-3.3, 3.2, 0.4, -PI - 1000.0,
+            -PI - 1000.0, -PI - 1000.0,  -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
+            -PI - 1000.0, -PI - 1000.0,  -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
         };
         double max_vel[10]
         {
