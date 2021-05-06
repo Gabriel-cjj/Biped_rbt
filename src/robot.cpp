@@ -421,7 +421,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         double pos_offset[10]
         {
             0,0,0,0,0,
-            0,0,0,0,0
+            0,0,0,0,0,
         };
 #else
 
