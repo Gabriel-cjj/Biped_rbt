@@ -439,7 +439,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         double max_pos[10]
         {
             PI + 1000.0, PI + 1000.0, 1, 2.1, 1.1,
-            0.5, -2.2, 3.8, 0.6, PI + 1000.0
+            0.5, -2.2, 3.8, 0.6, PI + 1000.0,
         };
         double min_pos[10]
         {
