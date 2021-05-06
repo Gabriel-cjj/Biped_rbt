@@ -44,6 +44,17 @@ public:
 
 };
 
+//class RobotPrepare : public aris::core::CloneObject<RobotPrepare, aris::plan::Plan>
+//{
+//public:
+//    auto virtual prepareNrt()->void;
+//    auto virtual executeRT()->int;
+//    auto virtual collectNrt()->void;
+//
+//    explicit RobotPrepare(const std::string& name = "RobotPrepare");
+//
+//};
+
 class WalkStep : public aris::core::CloneObject<WalkStep, aris::plan::Plan>
 {
 public:

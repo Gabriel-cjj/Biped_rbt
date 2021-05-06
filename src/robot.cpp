@@ -107,6 +107,51 @@ ReadPosition::ReadPosition(const std::string& name)
         "<Command name=\"read_p\"/>");
 }
 
+//auto RobotPrepare::prepareNrt()->void
+//{
+//    dir_ = doubleParam("direction");
+//    motornumber_ = doubleParam("motor_number");
+//
+//    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+//}
+//auto RobotPrepare::executeRT()->int
+//{
+//    static double begin_angle[10];
+//
+//    if (count() == 1)
+//    {
+//        begin_angle[0] = controller()->motionPool()[0].actualPos();
+//        begin_angle[1] = controller()->motionPool()[1].actualPos();
+//        begin_angle[2] = controller()->motionPool()[2].actualPos();
+//        begin_angle[3] = controller()->motionPool()[3].actualPos();
+//        begin_angle[4] = controller()->motionPool()[4].actualPos();
+//        begin_angle[5] = controller()->motionPool()[5].actualPos();
+//        begin_angle[6] = controller()->motionPool()[6].actualPos();
+//        begin_angle[7] = controller()->motionPool()[7].actualPos();
+//        begin_angle[8] = controller()->motionPool()[8].actualPos();
+//        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+//    }
+//
+//    TCurve s1(0.016, 0.3);
+//    s1.getCurveParam();
+//    double angle0 = begin_angle[motornumber_] + dir_ * s1.getTCurve(count());
+//
+//
+//    controller()->motionPool()[motornumber_].setTargetPos(angle0);
+//    return s1.getTc() * 1000 - count();
+//}
+//auto RobotPrepare::collectNrt()->void {}
+//RobotPrepare::RobotPrepare(const std::string& name)
+//{
+//    aris::core::fromXmlString(command(),
+//        "<Command name=\"test_motor\">"
+//        "<GroupParam>"
+//        "		<Param name=\"direction\" default=\"0.3\" abbreviation=\"d\"/>"
+//        "		<Param name=\"motor_number\" default=\"0\" abbreviation=\"m\"/>"
+//        "</GroupParam>"
+//        "</Command>");
+//}
+
 //原地踏步
 auto WalkStep::prepareNrt()->void
 {
@@ -185,11 +230,11 @@ auto WalkStep::executeRT()->int
         lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
     }
 
-    ////发送电机角度
-    //for (int i = 0; i < 10; i++)
-    //{
-    //        controller()->motionPool()[i].setTargetPos(input_angle[i]);
-    //}
+    //发送电机角度
+    for (int i = 0; i < 10; i++)
+    {
+            controller()->motionPool()[i].setTargetPos(input_angle[i]);
+    }
 
 
 
@@ -393,13 +438,13 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double max_pos[10]
         {
-            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
-            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0
+            PI + 1000.0, PI + 1000.0, 1, 2.1, 1.1,
+            0.5, -2.2, 3.8, 0.6, PI + 1000.0
         };
         double min_pos[10]
         {
-            -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
-            -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0, -PI - 1000.0
+            -PI - 1000.0, -PI - 1000.0, -1.6, -0.3, -0.2,
+            -0.5,-3.3, 3.2, 0.4, -PI - 1000.0,
         };
         double max_vel[10]
         {
@@ -498,6 +543,7 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<testIK>();
      plan_root->planPool().add<TestMotor>();
      plan_root->planPool().add<PositionCheck>();
+     //plan_root->planPool().add<RobotPrepare>();
 
 
     return plan_root;
