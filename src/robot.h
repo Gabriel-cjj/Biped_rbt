@@ -136,7 +136,6 @@ public:
 
     explicit RobotPrepare(const std::string& name = "RobotPrepare");
 private:
-    double dir_;
 
 };
 

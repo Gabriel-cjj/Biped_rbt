@@ -10,6 +10,19 @@
 #include "kinematics.h"
 
 double input_angle[10] = {0};
+double prepare_position_[10] =
+{
+    -0.736742,
+    -0.515609,
+    0.887983,
+    0.798197,
+    -0.123869,
+    -2.88542,
+    2.54521,
+    -0.0645231,
+    2.30749,
+    0
+};
 
 ////输出参数，模型曲线测试使用
 //double file_current_leg[6];
@@ -154,13 +167,12 @@ CheckEnable::CheckEnable(const std::string& name)
 //回到最初设置的位置
 auto RobotPrepare::prepareNrt()->void
 {
-    dir_ = doubleParam("direction");
     for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
 }
 auto RobotPrepare::executeRT()->int
 {
     static double begin_angle[10];
-
+    double angle[10] = { 0 };
     if (count() == 1)
     {
         begin_angle[0] = controller()->motionPool()[0].actualPos();
@@ -179,23 +191,14 @@ auto RobotPrepare::executeRT()->int
     TCurve s1(0.016, 0.3);
     s1.getCurveParam();
 
-    double preparePosition_[10] =
+    for (int i = 0; i < 12; i++)
     {
-        -0.736742,
-        -0.515609,
-        0.887983,
-        0.798197,
-        -0.123869,
-        -2.88542,
-        2.54521,
-        -0.0645231,
-        2.30749,
-        0
-    };
+        angle[i] = begin_angle[i] + (prepare_position_[i] - begin_angle[i]) * s1.getTCurve(count());
+    }
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 12; i++)
     {
-        controller()->motionPool()[i].setTargetPos(begin_angle[i] + (preparePosition_[i] - begin_angle[i]) * s1.getTCurve(count()));
+        controller()->motionPool()[i].setTargetPos(angle[i]);
     }
 
     return s1.getTc() * 1000 - count();
