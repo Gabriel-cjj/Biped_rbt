@@ -61,6 +61,152 @@ MoveJoint::MoveJoint(const std::string &name)
         "</Command>");
 }
 
+//修正读数
+auto PositionCheck::prepareNrt()->void
+{
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto PositionCheck::executeRT()->int
+{
+    static double begin_angle[10];
+
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+    }
+
+    if (begin_angle[5] > 0)
+    {
+        begin_angle[5] = begin_angle[5] - 2 * PI;
+        controller()->motionPool()[5].setPosOffset(-2 * PI);
+    }
+
+    if (begin_angle[6] < 0)
+    {
+        begin_angle[6] = begin_angle[6] + 2 * PI;
+        controller()->motionPool()[6].setPosOffset(+2 * PI);
+    }
+
+    return 0;
+}
+auto PositionCheck::collectNrt()->void {}
+PositionCheck::PositionCheck(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"check_pos\"/>");
+}
+
+//检查使能情况
+//全体电机移动一段距离，使能成功则可以移动。
+auto CheckEnable::prepareNrt()->void
+{
+    dir_ = doubleParam("direction");
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto CheckEnable::executeRT()->int
+{
+    static double begin_angle[10];
+
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+
+    }
+
+    TCurve s1(0.016, 0.3);
+    s1.getCurveParam();
+
+    for (int i = 0; i < 9; i++)
+    {
+        controller()->motionPool()[i].setTargetPos(begin_angle[i] + dir_ * s1.getTCurve(count()));
+    }
+
+    return s1.getTc() * 1000 - count();
+}
+auto CheckEnable::collectNrt()->void {}
+CheckEnable::CheckEnable(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"check_enable\">"
+        "		<Param name=\"direction\" default=\"0.2\" abbreviation=\"d\"/>"
+        "</Command>");
+}
+
+//机器人准备
+//回到最初设置的位置
+auto RobotPrepare::prepareNrt()->void
+{
+    dir_ = doubleParam("direction");
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto RobotPrepare::executeRT()->int
+{
+    static double begin_angle[10];
+
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+
+    }
+
+    TCurve s1(0.016, 0.3);
+    s1.getCurveParam();
+
+    double preparePosition_[10] =
+    {
+        -0.736742,
+        -0.515609,
+        0.887983,
+        0.798197,
+        -0.123869,
+        -2.88542,
+        2.54521,
+        -0.0645231,
+        2.30749,
+        0
+    };
+
+    for (int i = 0; i < 9; i++)
+    {
+        controller()->motionPool()[i].setTargetPos(begin_angle[i] + (preparePosition_[i] - begin_angle[i]) * s1.getTCurve(count()));
+    }
+
+    return s1.getTc() * 1000 - count();
+}
+auto RobotPrepare::collectNrt()->void {}
+RobotPrepare::RobotPrepare(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"rbt_prepare\"/>");
+}
+
 //读取当前位置
 auto ReadPosition::prepareNrt()->void
 {
@@ -107,51 +253,6 @@ ReadPosition::ReadPosition(const std::string& name)
         "<Command name=\"read_p\"/>");
 }
 
-//auto RobotPrepare::prepareNrt()->void
-//{
-//    dir_ = doubleParam("direction");
-//    motornumber_ = doubleParam("motor_number");
-//
-//    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
-//}
-//auto RobotPrepare::executeRT()->int
-//{
-//    static double begin_angle[10];
-//
-//    if (count() == 1)
-//    {
-//        begin_angle[0] = controller()->motionPool()[0].actualPos();
-//        begin_angle[1] = controller()->motionPool()[1].actualPos();
-//        begin_angle[2] = controller()->motionPool()[2].actualPos();
-//        begin_angle[3] = controller()->motionPool()[3].actualPos();
-//        begin_angle[4] = controller()->motionPool()[4].actualPos();
-//        begin_angle[5] = controller()->motionPool()[5].actualPos();
-//        begin_angle[6] = controller()->motionPool()[6].actualPos();
-//        begin_angle[7] = controller()->motionPool()[7].actualPos();
-//        begin_angle[8] = controller()->motionPool()[8].actualPos();
-//        //begin_angle[9] = controller()->motionPool()[9].actualPos();
-//    }
-//
-//    TCurve s1(0.016, 0.3);
-//    s1.getCurveParam();
-//    double angle0 = begin_angle[motornumber_] + dir_ * s1.getTCurve(count());
-//
-//
-//    controller()->motionPool()[motornumber_].setTargetPos(angle0);
-//    return s1.getTc() * 1000 - count();
-//}
-//auto RobotPrepare::collectNrt()->void {}
-//RobotPrepare::RobotPrepare(const std::string& name)
-//{
-//    aris::core::fromXmlString(command(),
-//        "<Command name=\"test_motor\">"
-//        "<GroupParam>"
-//        "		<Param name=\"direction\" default=\"0.3\" abbreviation=\"d\"/>"
-//        "		<Param name=\"motor_number\" default=\"0\" abbreviation=\"m\"/>"
-//        "</GroupParam>"
-//        "</Command>");
-//}
-
 //原地踏步
 auto WalkStep::prepareNrt()->void
 {
@@ -178,7 +279,7 @@ auto WalkStep::executeRT()->int
         //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    TCurve s1(2.0, 4.0);
+    TCurve s1(0.016, 0.3);
     s1.getCurveParam();
     EllipseTrajectory e1(0, 100.0, 0, s1);
 
@@ -234,11 +335,11 @@ auto WalkStep::executeRT()->int
     double angle1 = begin_angle[1] + input_angle[2];
     double angle2 = begin_angle[2] + input_angle[1];
     double angle3 = begin_angle[3] + input_angle[0];
-    double angle4 = begin_angle[4] + input_angle[4];
-    double angle5 = begin_angle[5] + input_angle[5];
-    double angle6 = begin_angle[6] + input_angle[6];
-    double angle7 = begin_angle[7] + input_angle[7];
-    double angle8 = begin_angle[8] + input_angle[8];
+    double angle4 = begin_angle[4] + input_angle[5];
+    double angle5 = begin_angle[5] + input_angle[6];
+    double angle6 = begin_angle[6] + input_angle[7];
+    double angle7 = begin_angle[7] + input_angle[8];
+    double angle8 = begin_angle[8] + input_angle[9];
     //double angle9 = begin_angle[9] + input_angle[3];
 
 
@@ -376,49 +477,7 @@ testIK::testIK(const std::string& name)
         "<Command name=\"test_ik\"/>");
 }
 
-//修正读数
-auto PositionCheck::prepareNrt()->void
-{
-    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
-}
-auto PositionCheck::executeRT()->int
-{
-    static double begin_angle[10];
 
-    if (count() == 1)
-    {
-        begin_angle[0] = controller()->motionPool()[0].actualPos();
-        begin_angle[1] = controller()->motionPool()[1].actualPos();
-        begin_angle[2] = controller()->motionPool()[2].actualPos();
-        begin_angle[3] = controller()->motionPool()[3].actualPos();
-        begin_angle[4] = controller()->motionPool()[4].actualPos();
-        begin_angle[5] = controller()->motionPool()[5].actualPos();
-        begin_angle[6] = controller()->motionPool()[6].actualPos();
-        begin_angle[7] = controller()->motionPool()[7].actualPos();
-        begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
-    }
-
-    if (begin_angle[5] > 0)
-    {
-        begin_angle[5] = begin_angle[5] - 2 * PI;
-        controller()->motionPool()[5].setPosOffset(-2 * PI);
-    }
-
-    if (begin_angle[6]<0) 
-    {
-        begin_angle[6] = begin_angle[6] + 2 * PI;
-        controller()->motionPool()[6].setPosOffset(+2 * PI);
-    }
-
-    return 0;
-}
-auto PositionCheck::collectNrt()->void {}
-PositionCheck::PositionCheck(const std::string& name)
-{
-    aris::core::fromXmlString(command(),
-        "<Command name=\"check_pos\"/>");
-}
 
 
 
@@ -562,7 +621,8 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<testIK>();
      plan_root->planPool().add<TestMotor>();
      plan_root->planPool().add<PositionCheck>();
-     //plan_root->planPool().add<RobotPrepare>();
+     plan_root->planPool().add<CheckEnable>();
+     plan_root->planPool().add<RobotPrepare>();
 
 
     return plan_root;

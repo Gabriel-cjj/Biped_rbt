@@ -114,6 +114,32 @@ private:
 
 };
 
+class CheckEnable : public aris::core::CloneObject<CheckEnable, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit CheckEnable(const std::string& name = "CheckEnable");
+private:
+    double dir_;
+
+};
+
+class RobotPrepare : public aris::core::CloneObject<RobotPrepare, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit RobotPrepare(const std::string& name = "RobotPrepare");
+private:
+    double dir_;
+
+};
+
 
 
     auto createControllerBiped()->std::unique_ptr<aris::control::Controller>;
