@@ -175,7 +175,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     const double kLGH = 120;
     const double kLIJ = 85;
     const double kLEJ = 40;
-    const double kLEI = sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
+    const double kLEI = std::sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
     const double kQ30 = 2.768114255522946;
     const double kQ50 = 1.020376369330288;
 
@@ -200,15 +200,15 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     double q1 = 0, q2 = 0, q3 = 0, q4 = 0, q5 = 0;
     double i=0;//判断左右，0左1右
     double x0 = 0, y0 = 0, x1 = 0, y1 = 0;
-    double theta1=0, theta2=0, theta3=0, theta4=0;
+    double theta1 = 0, theta2 = 0, theta3 = 0, theta4 = 0;
     double a_nop = 0, a_mpn = 0, a_lim = 0, a_eij = 0, a_eik = 0, a_cbe = 0, a_abe = 0, a_abc = 0, a_bac = 0, a_cad = 0, a_bad = 0, a_bae = 0, a_eaf = 0,
         a_daf = 0, a_adc = 0, a_aec = 0, a_aeb = 0, a_aef = 0, a_bec = 0, a_gei = 0, a_gei_b = 0, a_gei_s = 0, a_hgi = 0, a_egi = 0, a_egh = 0;
     double l_np = 0, l_qs = 0, l_rs = 0, l_or = 0, l_os = 0, l_lm = 0, l_il = 0, l_ik = 0, l_ek = 0, l_ae = 0, l_af = 0, l_ef = 0, l_ac = 0, l_gi = 0;
 
     double l_im = l;
-    double l_mn = abs(x);
-    double l_no = sqrt(y * y + z * z);
-    double l_mo = sqrt(x * x + y * y + z * z);
+    double l_mn = std::abs(x);
+    double l_no = std::sqrt(y * y + z * z);
+    double l_mo = std::sqrt(x * x + y * y + z * z);
 
 
 
@@ -225,7 +225,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
     //求q1
     double k = -z_c / y_c;
-    theta1 = atan(k);
+    theta1 = std::atan(k);
 
     if (theta1 > 0 && theta1 < PI / 2)
     {
@@ -363,8 +363,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             a_nop = PI / 2 - theta2;
         }
 
-        l_np = l_no * sin(a_nop);
-        a_mpn = atan(l_mn / l_np);
+        l_np = l_no * std::sin(a_nop);
+        a_mpn = std::atan(l_mn / l_np);
 
         if (x > 0)
         {
@@ -416,8 +416,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             a_nop = PI / 2 - theta2;
         }
 
-        l_np = l_no * sin(a_nop);
-        a_mpn = atan(l_mn / l_np);
+        l_np = l_no * std::sin(a_nop);
+        a_mpn = std::atan(l_mn / l_np);
 
         if (x > 0)
         {
@@ -448,34 +448,34 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     if (q2 == 0)
     {
         x0 = x;
-        y0 = -sqrt(y * y + z * z);
+        y0 = -std::sqrt(y * y + z * z);
     }
     else if (q2 != 0)
     {
-        x0 = l_mn / sin(a_mpn) * x / abs(x);
-        y0 = -sqrt(l_no * l_no - l_np * l_np);
+        x0 = l_mn / std::sin(a_mpn) * x / std::abs(x);
+        y0 = -std::sqrt(l_no * l_no - l_np * l_np);
     }
 
     //求脚踝转动副坐标（x1，y1）
-    l_qs = a / cos(q2);
-    l_rs = sqrt(l_qs * l_qs - a * a);
-    l_or = sqrt(b * b + c * c);
-    l_os = sqrt(l_or * l_or - l_rs * l_rs);
-    a_lim = atan(l_os / l_qs);
-    a_eij = atan(kLEJ / kLIJ);
-    l_lm = l_im * sin(a_lim);
-    l_il = l_im * cos(a_lim);
-    theta2 = acos(abs(z) / l_no);
+    l_qs = a / std::cos(q2);
+    l_rs = std::sqrt(l_qs * l_qs - a * a);
+    l_or = std::sqrt(b * b + c * c);
+    l_os = std::sqrt(l_or * l_or - l_rs * l_rs);
+    a_lim = std::atan(l_os / l_qs);
+    a_eij = std::atan(kLEJ / kLIJ);
+    l_lm = l_im * std::sin(a_lim);
+    l_il = l_im * std::cos(a_lim);
+    theta2 = std::acos(std::abs(z) / l_no);
 
-    if (abs(theta1) == PI / 2)
+    if (std::abs(theta1) == PI / 2)
     {
         if (b > 0)
         {
             if (a_eij + a_lim > PI / 2)
             {
                 a_eik = PI - a_eij - a_lim;
-                l_ik = kLEI * cos(a_eik);
-                l_ek = kLEI * sin(a_eik);
+                l_ik = kLEI * std::cos(a_eik);
+                l_ek = kLEI * std::sin(a_eik);
 
                 x1 = x0 - l_ik - l_il;
                 y1 = y0 - l_lm + l_ek;
@@ -488,8 +488,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
             else if (a_eij + a_lim < PI / 2)
             {
                 a_eik = a_eij + a_lim;
-                l_ik = kLEI * cos(a_eik);
-                l_ek = kLEI * sin(a_eik);
+                l_ik = kLEI * std::cos(a_eik);
+                l_ek = kLEI * std::sin(a_eik);
 
                 x1 = x0 + l_ik - l_il;
                 y1 = y0 - l_lm + l_ek;
@@ -503,8 +503,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         else if (b < 0)
         {
             a_eik = a_eij - a_lim;
-            l_ik = kLEI * cos(a_eik);
-            l_ek = kLEI * sin(a_eik);
+            l_ik = kLEI * std::cos(a_eik);
+            l_ek = kLEI * std::sin(a_eik);
 
             x1 = x0 + l_ik - l_il;
             y1 = y0 + l_lm + l_ek;
@@ -515,8 +515,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         if (a_eij + a_lim > PI / 2)
         {
             a_eik = PI - a_eij - a_lim;
-            l_ik = kLEI * cos(a_eik);
-            l_ek = kLEI * sin(a_eik);
+            l_ik = kLEI * std::cos(a_eik);
+            l_ek = kLEI * std::sin(a_eik);
 
             x1 = x0 - l_ik - l_il;
             y1 = y0 - l_lm + l_ek;
@@ -529,8 +529,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         else if (a_eij + a_lim < PI / 2)
         {
             a_eik = a_eij + a_lim;
-            l_ik = kLEI * cos(a_eik);
-            l_ek = kLEI * sin(a_eik);
+            l_ik = kLEI * std::cos(a_eik);
+            l_ek = kLEI * std::sin(a_eik);
 
             x1 = x0 + l_ik - l_il;
             y1 = y0 - l_lm + l_ek;
@@ -544,26 +544,26 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     else if (-k * c > b)
     {
         a_eik = a_eij - a_lim;
-        l_ik = kLEI * cos(a_eik);
-        l_ek = kLEI * sin(a_eik);
+        l_ik = kLEI * std::cos(a_eik);
+        l_ek = kLEI * std::sin(a_eik);
 
         x1 = x0 + l_ik - l_il;
         y1 = y0 + l_lm + l_ek;
     }
 
     //求q3
-    l_ae = sqrt(x1 * x1 + (y1 + kLAO) * (y1 + kLAO));
+    l_ae = std::sqrt(x1 * x1 + (y1 + kLAO) * (y1 + kLAO));
     l_af = -(y1 + kLAO);
-    l_ef = abs(x1);
-    a_cbe = acos((kLBC * kLBC + kLBE * kLBE - kLCE * kLCE) / (2 * kLBC * kLBE));
-    a_abe = acos((kLAB * kLAB + kLBE * kLBE - l_ae * l_ae) / (2 * kLAB * kLBE));
+    l_ef = std::abs(x1);
+    a_cbe = std::acos((kLBC * kLBC + kLBE * kLBE - kLCE * kLCE) / (2 * kLBC * kLBE));
+    a_abe = std::acos((kLAB * kLAB + kLBE * kLBE - l_ae * l_ae) / (2 * kLAB * kLBE));
     a_abc = a_abe - a_cbe;
-    l_ac = sqrt(kLAB * kLAB + kLBC * kLBC - 2 * kLAB * kLBC * cos(a_abc));
-    a_bac = acos((kLAB * kLAB + l_ac * l_ac - kLBC * kLBC) / (2 * kLAB * l_ac));
-    a_cad = acos((l_ac * l_ac + kLAD * kLAD - kLCD * kLCD) / (2 * l_ac * kLAD));
+    l_ac = std::sqrt(kLAB * kLAB + kLBC * kLBC - 2 * kLAB * kLBC * std::cos(a_abc));
+    a_bac = std::acos((kLAB * kLAB + l_ac * l_ac - kLBC * kLBC) / (2 * kLAB * l_ac));
+    a_cad = std::acos((l_ac * l_ac + kLAD * kLAD - kLCD * kLCD) / (2 * l_ac * kLAD));
     a_bad = a_bac + a_cad;
-    a_bae = acos((kLAB * kLAB + l_ae * l_ae - kLBE * kLBE) / (2 * kLAB * l_ae));
-    a_eaf = acos((l_ae * l_ae + l_af * l_af - l_ef * l_ef) / (2 * l_ae * l_af));
+    a_bae = std::acos((kLAB * kLAB + l_ae * l_ae - kLBE * kLBE) / (2 * kLAB * l_ae));
+    a_eaf = std::acos((l_ae * l_ae + l_af * l_af - l_ef * l_ef) / (2 * l_ae * l_af));
 
     if (x1 > 0)
     {
@@ -581,16 +581,16 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     q3 = PI - a_daf - kQ30;
 
     //-----q4-----
-    a_adc = acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
+    a_adc = std::acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
 
     q4 = a_adc - 3.0 / 4.0 * PI;
 
     //-----q5-----
     //求∠GEI
-    a_aec = acos((l_ae * l_ae + kLCE * kLCE - l_ac * l_ac) / (2 * l_ae * kLCE));
-    a_aeb = acos((l_ae * l_ae + kLBE * kLBE - kLAB * kLAB) / (2 * l_ae * kLBE));
-    a_aef = acos((l_ae * l_ae + x1 * x1 - (y1 + kLAO) * (y1 + kLAO)) / (2 * l_ae * abs(x1)));
-    a_bec = acos((kLCE * kLCE + kLBE * kLBE - kLBC * kLBC) / (2 * kLCE * kLBE));
+    a_aec = std::acos((l_ae * l_ae + kLCE * kLCE - l_ac * l_ac) / (2 * l_ae * kLCE));
+    a_aeb = std::acos((l_ae * l_ae + kLBE * kLBE - kLAB * kLAB) / (2 * l_ae * kLBE));
+    a_aef = std::acos((l_ae * l_ae + x1 * x1 - (y1 + kLAO) * (y1 + kLAO)) / (2 * l_ae * std::abs(x1)));
+    a_bec = std::acos((kLCE * kLCE + kLBE * kLBE - kLBC * kLBC) / (2 * kLCE * kLBE));
 
     if (x1 > 0)
     {
@@ -678,8 +678,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     a_gei = theta3 + theta4;
 
     //求∠GEI最大值和最小值
-    a_gei_b = acos((kLEG * kLEG + kLEI * kLEI - (kLGH + kLHI) * (kLGH + kLHI)) / (2 * kLEG * kLEI));
-    a_gei_s = acos((kLEG * kLEG + (kLEI + kLHI) * (kLEI + kLHI) - kLGH * kLGH) / (2 * kLEG * (kLEI + kLHI)));
+    a_gei_b = std::acos((kLEG * kLEG + kLEI * kLEI - (kLGH + kLHI) * (kLGH + kLHI)) / (2 * kLEG * kLEI));
+    a_gei_s = std::acos((kLEG * kLEG + (kLEI + kLHI) * (kLEI + kLHI) - kLGH * kLGH) / (2 * kLEG * (kLEI + kLHI)));
 
     //求q5
     if (a_gei > a_gei_b)
@@ -691,9 +691,9 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         a_gei = a_gei_s;
     }
 
-    l_gi = sqrt(kLEG * kLEG + kLEI * kLEI - 2 * kLEG * kLEI * cos(a_gei));
-    a_hgi = acos((kLGH * kLGH + l_gi * l_gi - kLHI * kLHI) / (2 * kLGH * l_gi));
-    a_egi = acos((kLEG * kLEG + l_gi * l_gi - kLEI * kLEI) / (2 * kLEG * l_gi));
+    l_gi = std::sqrt(kLEG * kLEG + kLEI * kLEI - 2 * kLEG * kLEI * std::cos(a_gei));
+    a_hgi = std::acos((kLGH * kLGH + l_gi * l_gi - kLHI * kLHI) / (2 * kLGH * l_gi));
+    a_egi = std::acos((kLEG * kLEG + l_gi * l_gi - kLEI * kLEI) / (2 * kLEG * l_gi));
     a_egh = a_egi + a_hgi;
 
     q5 = a_egh - kQ50;
