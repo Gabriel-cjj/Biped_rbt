@@ -12,6 +12,7 @@
 double input_angle[10] = {0};
 double prepare_position_[10] =
 {
+    0,
     -0.736742,
     -0.515609,
     0.887983,
@@ -21,7 +22,6 @@ double prepare_position_[10] =
     2.54521,
     -0.0645231,
     2.30749,
-    0
 };
 
 ////输出参数，模型曲线测试使用
@@ -94,7 +94,7 @@ auto PositionCheck::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
     if (begin_angle[5] > 0)
@@ -106,6 +106,12 @@ auto PositionCheck::executeRT()->int
     if (begin_angle[6] < 0)
     {
         begin_angle[6] = begin_angle[6] + 2 * PI;
+        controller()->motionPool()[6].setPosOffset(+2 * PI);
+    }
+
+    if (begin_angle[8] < 0)
+    {
+        begin_angle[8] = begin_angle[8] + 2 * PI;
         controller()->motionPool()[6].setPosOffset(+2 * PI);
     }
 
@@ -140,14 +146,14 @@ auto CheckEnable::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
 
     }
 
     TCurve s1(0.016, 0.3);
     s1.getCurveParam();
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 10; i++)
     {
         controller()->motionPool()[i].setTargetPos(begin_angle[i] + dir_ * s1.getTCurve(count()));
     }
@@ -184,19 +190,19 @@ auto RobotPrepare::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
 
     }
 
     TCurve s1(0.016, 0.3);
     s1.getCurveParam();
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 10; i++)
     {
         angle[i] = begin_angle[i] + (prepare_position_[i] - begin_angle[i]) * s1.getTCurve(count());
     }
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 10; i++)
     {
         controller()->motionPool()[i].setTargetPos(angle[i]);
     }
@@ -230,7 +236,7 @@ auto ReadPosition::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
 
 
         //controller()->motionPool()[0].actualPos();
@@ -260,6 +266,7 @@ ReadPosition::ReadPosition(const std::string& name)
 auto WalkStep::prepareNrt()->void
 {
     step_ = doubleParam("step");
+    v_ = doubleParam("speed");
     for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
 }
 auto WalkStep::executeRT()->int
@@ -279,10 +286,10 @@ auto WalkStep::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    TCurve s1(0.016, 0.3);
+    TCurve s1(v_ / 10, v_);
     s1.getCurveParam();
     EllipseTrajectory e1(0, 100.0, 0, s1);
 
@@ -333,17 +340,17 @@ auto WalkStep::executeRT()->int
         //}
         lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
     }
-
-    double angle0 = begin_angle[0] + input_angle[3];
-    double angle1 = begin_angle[1] + input_angle[2];
-    double angle2 = begin_angle[2] + input_angle[1];
-    double angle3 = begin_angle[3] + input_angle[0];
-    double angle4 = begin_angle[4] + input_angle[5];
-    double angle5 = begin_angle[5] + input_angle[6];
-    double angle6 = begin_angle[6] + input_angle[7];
-    double angle7 = begin_angle[7] + input_angle[8];
-    double angle8 = begin_angle[8] + input_angle[9];
-    //double angle9 = begin_angle[9] + input_angle[3];
+   
+    double angle0 = begin_angle[0] - input_angle[4];
+    double angle1 = begin_angle[1] + input_angle[3];
+    double angle2 = begin_angle[2] + input_angle[2];
+    double angle3 = begin_angle[3] + input_angle[1];
+    double angle4 = begin_angle[4] + input_angle[0];
+    double angle5 = begin_angle[5] + input_angle[5];
+    double angle6 = begin_angle[6] + input_angle[6];
+    double angle7 = begin_angle[7] - input_angle[7];
+    double angle8 = begin_angle[8] - input_angle[8];
+    double angle9 = begin_angle[9] + input_angle[9];
 
 
     //发送电机角度
@@ -356,7 +363,7 @@ auto WalkStep::executeRT()->int
     controller()->motionPool()[6].setTargetPos(angle6);
     controller()->motionPool()[7].setTargetPos(angle7);
     controller()->motionPool()[8].setTargetPos(angle8);
-    //controller()->motionPool()[9].setTargetPos(input_angle[i]);
+    controller()->motionPool()[9].setTargetPos(angle9);
 
 
 
@@ -370,7 +377,10 @@ WalkStep::WalkStep(const std::string& name)
 {
     aris::core::fromXmlString(command(),
         "<Command name=\"walk_step\">"
+        "<GroupParam>"
         "       <Param name=\"step\" default=\"1\" abbreviation=\"n\"/>"
+        "		<Param name=\"speed\" default=\"0.3\" abbreviation=\"v\"/>"
+        "</GroupParam>"
         "</Command>");
 }
 
@@ -397,7 +407,7 @@ auto TestMotor::executeRT()->int
         begin_angle[6] = controller()->motionPool()[6].actualPos();
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
     TCurve s1(0.016, 0.3);
@@ -496,7 +506,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
 {
     std::unique_ptr<aris::control::Controller> controller(new aris::control::EthercatController);
 
-    for (aris::Size i = 0; i < 9; ++i)
+    for (aris::Size i = 0; i < 10; ++i)
     {
 #ifdef ARIS_USE_ETHERCAT_SIMULATION
         double pos_offset[10]
@@ -519,13 +529,13 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double max_pos[10]
         {
-            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
-            PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0, PI + 1000.0,
+            PI + 1000,          -0.736646 + PI / 4, -0.515561 + 0.3735,  0.8879350 + PI / 4, 0.798149 + PI / 4,
+            -0.123869 + PI / 4, -2.885420 + PI / 2,  2.545210 + 1.1937, -0.0645231 + 2.0269, 3.546180,
         };
         double min_pos[10]
         {
-            -PI - 1000.0, -PI - 1000.0,  -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
-            -PI - 1000.0, -PI - 1000.0,  -PI - 1000.0, -PI - 1000.0, -PI - 1000.0,
+            -PI - 1000,         -0.736646 - 2.0269, -0.515561 - 1.1937,  0.8879350 - PI / 2, 0.798149 - PI / 4,
+            -0.123869 - PI / 4, -2.885420 - PI / 4,  2.545210 - 0.3735, -0.0645231 - PI / 4, 1.946090,
         };
         double max_vel[10]
         {

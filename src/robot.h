@@ -65,6 +65,7 @@ public:
     explicit WalkStep(const std::string& name = "WalkStep");
 private:
     double step_;
+    double v_;
 
 };
 

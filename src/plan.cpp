@@ -264,6 +264,47 @@ auto planBipedRobotBodyforWalk(int e_1, int n, double* current_body, int count, 
 	}
 }
 
+auto planBipedRobotBodyforWalkStep(int e_1, int n, double* current_body, int count, EllipseTrajectory* Ellipse)->void
+{
+	int per_step_count = Ellipse->getTcurve().getTc() * 1000;
+
+	if (count == 0) 
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			current_body[i] = body_positon_start_point[i];
+		}
+	}
+
+	if (e_1 == 0)   //加速段
+	{
+		current_body[3] = body_positon_start_point[3];
+		current_body[7] = body_positon_start_point[7];
+		current_body[11] = body_positon_start_point[11];
+	}
+	else if (e_1 == n - 1)//减速段
+	{
+		int t = (2 * n - 1) * per_step_count + per_step_count;
+		current_body[3] = body_positon_start_point[3];
+		current_body[7] = body_positon_start_point[7];
+		current_body[11] = body_positon_start_point[11];
+	}
+	else //匀速段
+	{
+		current_body[3] = body_positon_start_point[3];
+		current_body[7] = body_positon_start_point[7];
+		current_body[11] = body_positon_start_point[11];
+	}
+
+	if (count + 1 >= 2 * n * per_step_count)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			body_positon_start_point[i] = current_body[i];
+		}
+	}
+}
+
 /////////////////////////////////////步态规划////////////////////////////////////////////////
 
 //机器人行走步态，包括原地踏步、前进、后退、左移、右移。
