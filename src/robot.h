@@ -140,6 +140,18 @@ private:
 
 };
 
+class MoveEndPoint : public aris::core::CloneObject<MoveEndPoint, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit MoveEndPoint(const std::string& name = "MoveEndPoint");
+private:
+
+};
+
 
 
     auto createControllerBiped()->std::unique_ptr<aris::control::Controller>;
