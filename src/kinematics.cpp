@@ -708,7 +708,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
 }
 
-void ikForBipedRobotforTest(double x, double y, double z, double a, double b, double c, double l, double input[6]) {
+void ikForBipedRobotforTest(double x, double y, double z, double a, double b, double c, double l, double input[5]) {
     //-----已知数据-----
     //L、l为长
     //v为向量
@@ -1246,7 +1246,6 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     input[2] = q3;
     input[3] = q4;
     input[4] = q5;
-    input[5] = a_adc;
 
 
 }

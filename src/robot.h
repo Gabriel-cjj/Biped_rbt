@@ -44,17 +44,6 @@ public:
 
 };
 
-//class RobotPrepare : public aris::core::CloneObject<RobotPrepare, aris::plan::Plan>
-//{
-//public:
-//    auto virtual prepareNrt()->void;
-//    auto virtual executeRT()->int;
-//    auto virtual collectNrt()->void;
-//
-//    explicit RobotPrepare(const std::string& name = "RobotPrepare");
-//
-//};
-
 class WalkStep : public aris::core::CloneObject<WalkStep, aris::plan::Plan>
 {
 public:
@@ -83,24 +72,24 @@ private:
 
 };
 
-class testIK : public aris::core::CloneObject<testIK, aris::plan::Plan>
-{
-public:
-    auto virtual prepareNrt()->void;
-    auto virtual executeRT()->int;
-    auto virtual collectNrt()->void;
-
-    explicit testIK(const std::string& name = "testIK");
-private:
-    double x_;
-    double y_;
-    double z_;
-    double a_;
-    double b_;
-    double c_;
-    double l_;
-
-};
+//class testIK : public aris::core::CloneObject<testIK, aris::plan::Plan>
+//{
+//public:
+//    auto virtual prepareNrt()->void;
+//    auto virtual executeRT()->int;
+//    auto virtual collectNrt()->void;
+//
+//    explicit testIK(const std::string& name = "testIK");
+//private:
+//    double x_;
+//    double y_;
+//    double z_;
+//    double a_;
+//    double b_;
+//    double c_;
+//    double l_;
+//
+//};
 
 class PositionCheck : public aris::core::CloneObject<PositionCheck, aris::plan::Plan>
 {
@@ -140,15 +129,23 @@ private:
 
 };
 
-class MoveEndPoint : public aris::core::CloneObject<MoveEndPoint, aris::plan::Plan>
+class MoveEnd : public aris::core::CloneObject<MoveEnd, aris::plan::Plan>
 {
 public:
     auto virtual prepareNrt()->void;
     auto virtual executeRT()->int;
     auto virtual collectNrt()->void;
 
-    explicit MoveEndPoint(const std::string& name = "MoveEndPoint");
+    explicit MoveEnd(const std::string& name = "MoveEnd");
 private:
+    double x1_;
+    double y1_;
+    double z1_;
+    double x2_;
+    double y2_;
+    double z2_;
+    double l1_;
+    double l2_;
 
 };
 

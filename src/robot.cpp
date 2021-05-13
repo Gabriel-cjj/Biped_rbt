@@ -33,6 +33,8 @@ double prepare_position_[10] =
 extern double file_current_leg[6];
 extern double file_current_body[16];
 extern double time_test;
+extern double cs_of_leg1[16];
+extern double cs_of_leg2[16];
 
 
 
@@ -97,21 +99,21 @@ auto PositionCheck::executeRT()->int
         begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
-    if (begin_angle[5] > 0)
+    if (begin_angle[6] > 0)
     {
-        begin_angle[5] = begin_angle[5] - 2 * PI;
+        begin_angle[6] = begin_angle[6] - 2 * PI;
         controller()->motionPool()[5].setPosOffset(-2 * PI);
     }
 
-    if (begin_angle[6] < 0)
+    if (begin_angle[7] < 0)
     {
-        begin_angle[6] = begin_angle[6] + 2 * PI;
+        begin_angle[7] = begin_angle[7] + 2 * PI;
         controller()->motionPool()[6].setPosOffset(+2 * PI);
     }
 
-    if (begin_angle[8] < 0)
+    if (begin_angle[9] < 0)
     {
-        begin_angle[8] = begin_angle[8] + 2 * PI;
+        begin_angle[9] = begin_angle[9] + 2 * PI;
         controller()->motionPool()[6].setPosOffset(+2 * PI);
     }
 
@@ -430,65 +432,150 @@ TestMotor::TestMotor(const std::string& name)
         "</Command>");
 }
 
-//反解测试
-auto testIK::prepareNrt()->void
+//末端位置移动
+auto MoveEnd::prepareNrt()->void
 {
-    //x_ = doubleParam("x");
-    //y_ = doubleParam("y");
-    //z_ = doubleParam("z");
-    //a_ = doubleParam("a");
-    //b_ = doubleParam("b");
-    //c_ = doubleParam("c");
-    //l_ = doubleParam("l");
+    x1_ = doubleParam("x_left_leg");
+    y1_ = doubleParam("y_left_leg");
+    z1_ = doubleParam("z_left_leg");
+    x2_ = doubleParam("x_right_leg");
+    y2_ = doubleParam("y_right_leg");
+    z2_ = doubleParam("z_right_leg");
+    l1_ = doubleParam("left_end_position_on_foot");
+    l2_ = doubleParam("right_end_position_on_foot");
     for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
 }
-auto testIK::executeRT()->int
+auto MoveEnd::executeRT()->int
 {
-    //double end_position[3] =
-    //{
-    //    65, -1131.9101101572, 0
-    //};
-    double end_pointing[3] =
+    static double begin_angle[10];
+    if (count() == 1)
     {
-        1, 0, 0
-    };
-    double end_position_on_foot[1] = { 150 };
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
 
-
-    //ikForBipedRobotforTest(end_position[0], end_position[1], end_position[2], end_pointing[0], end_pointing[1], end_pointing[2], end_position_on_foot, input_angle);
-
-    double current_leg_in_ground[3] =
-    {
-        -kBodyLong, 0, -kBodyWidth / 2,
-    };
-    double current_body_in_ground[3] =
-    {
-        file_current_body[3], file_current_body[7], file_current_body[11]
-    };
-
-    inverseCalculation(current_leg_in_ground, current_body_in_ground, end_pointing, end_position_on_foot, input_angle);
-    
-    for (int i = 0; i < 6; i++)
-    {
-        mout() << input_angle[i] << "\t\n";
     }
 
-    return 0;
+    TCurve s1(0.016, 0.3);
+    s1.getCurveParam();
+
+
+
+    ikForBipedRobotforTest(x1_, y1_, z1_, 1, 0, 0, l1_, input_angle + 0 * 5);
+    ikForBipedRobotforTest(x2_, y2_, z2_, 1, 0, 0, l2_, input_angle + 0 * 5);
+
+    double angle0 = begin_angle[0] - input_angle[4] * s1.getTCurve(count());
+    double angle1 = begin_angle[1] + input_angle[3] * s1.getTCurve(count());
+    double angle2 = begin_angle[2] + input_angle[2] * s1.getTCurve(count());
+    double angle3 = begin_angle[3] + input_angle[1] * s1.getTCurve(count());
+    double angle4 = begin_angle[4] + input_angle[0] * s1.getTCurve(count());
+    double angle5 = begin_angle[5] + input_angle[5] * s1.getTCurve(count());
+    double angle6 = begin_angle[6] + input_angle[6] * s1.getTCurve(count());
+    double angle7 = begin_angle[7] - input_angle[7] * s1.getTCurve(count());
+    double angle8 = begin_angle[8] - input_angle[8] * s1.getTCurve(count());
+    double angle9 = begin_angle[9] + input_angle[9] * s1.getTCurve(count());
+
+
+    //发送电机角度
+    controller()->motionPool()[0].setTargetPos(angle0);
+    controller()->motionPool()[1].setTargetPos(angle1);
+    controller()->motionPool()[2].setTargetPos(angle2);
+    controller()->motionPool()[3].setTargetPos(angle3);
+    controller()->motionPool()[4].setTargetPos(angle4);
+    controller()->motionPool()[5].setTargetPos(angle5);
+    controller()->motionPool()[6].setTargetPos(angle6);
+    controller()->motionPool()[7].setTargetPos(angle7);
+    controller()->motionPool()[8].setTargetPos(angle8);
+    controller()->motionPool()[9].setTargetPos(angle9);
+
+    return s1.getTc() * 1000 - count();
 }
-auto testIK::collectNrt()->void {}
-testIK::testIK(const std::string& name)
+auto MoveEnd::collectNrt()->void {}
+MoveEnd::MoveEnd(const std::string& name)
 {
     aris::core::fromXmlString(command(),
-        //"<Command name=\"test_ik\">"
-        //"       <Param name=\"x\" default=\"1\" abbreviation=\"n\"/>"
-        //"       <Param name=\"y\" default=\"1\" abbreviation=\"n\"/>"
-        //"       <Param name=\"z\" default=\"1\" abbreviation=\"n\"/>"
-        //"       <Param name=\"a\" default=\"1\" abbreviation=\"n\"/>"
-        //"       <Param name=\"b\" default=\"1\" abbreviation=\"n\"/>"
-        //"       <Param name=\"l\" default=\"1\" abbreviation=\"n\"/>"
-        //"</Command>");
-        "<Command name=\"test_ik\"/>");
+        "<Command name=\"move_end\">"
+        "<GroupParam>"
+        //"       <Param name=\"x_left_leg\" default=\"0\" abbreviation=\"x\"/>"
+        //"		<Param name=\"y_left_leg\" default=\"-900\" abbreviation=\"y\"/>"
+        //"		<Param name=\"z_left_leg\" default=\"0\" abbreviation=\"z\"/>"
+        //"       <Param name=\"x_right_leg\" default=\"0\" abbreviation=\"X\"/>"
+        //"		<Param name=\"y_right_leg\" default=\"-900\" abbreviation=\"Y\"/>"
+        //"		<Param name=\"z_right_leg\" default=\"0\" abbreviation=\"Z\"/>"
+        "		<Param name=\"left_end_position_on_foot\" default=\"85\" abbreviation=\"ll\"/>"
+        "		<Param name=\"right_end_position_on_foot\" default=\"85\" abbreviation=\"l\"/>"
+        "</GroupParam>"
+        "</Command>");
+
+    //"<Command name=\"move_end\"/>");
 }
+
+////反解测试
+//auto testIK::prepareNrt()->void
+//{
+//    //x_ = doubleParam("x");
+//    //y_ = doubleParam("y");
+//    //z_ = doubleParam("z");
+//    //a_ = doubleParam("a");
+//    //b_ = doubleParam("b");
+//    //c_ = doubleParam("c");
+//    //l_ = doubleParam("l");
+//    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+//}
+//auto testIK::executeRT()->int
+//{
+//    //double end_position[3] =
+//    //{
+//    //    65, -1131.9101101572, 0
+//    //};
+//    double end_pointing[3] =
+//    {
+//        1, 0, 0
+//    };
+//    double end_position_on_foot[1] = { 150 };
+//
+//
+//    //ikForBipedRobotforTest(end_position[0], end_position[1], end_position[2], end_pointing[0], end_pointing[1], end_pointing[2], end_position_on_foot, input_angle);
+//
+//    double current_leg_in_ground[3] =
+//    {
+//        -kBodyLong, 0, -kBodyWidth / 2,
+//    };
+//    double current_body_in_ground[3] =
+//    {
+//        file_current_body[3], file_current_body[7], file_current_body[11]
+//    };
+//
+//    inverseCalculation(current_leg_in_ground, current_body_in_ground, end_pointing, end_position_on_foot, input_angle);
+//    
+//    for (int i = 0; i < 6; i++)
+//    {
+//        mout() << input_angle[i] << "\t\n";
+//    }
+//
+//    return 0;
+//}
+//auto testIK::collectNrt()->void {}
+//testIK::testIK(const std::string& name)
+//{
+//    aris::core::fromXmlString(command(),
+//        //"<Command name=\"test_ik\">"
+//        //"       <Param name=\"x\" default=\"1\" abbreviation=\"n\"/>"
+//        //"       <Param name=\"y\" default=\"1\" abbreviation=\"n\"/>"
+//        //"       <Param name=\"z\" default=\"1\" abbreviation=\"n\"/>"
+//        //"       <Param name=\"a\" default=\"1\" abbreviation=\"n\"/>"
+//        //"       <Param name=\"b\" default=\"1\" abbreviation=\"n\"/>"
+//        //"       <Param name=\"l\" default=\"1\" abbreviation=\"n\"/>"
+//        //"</Command>");
+//        "<Command name=\"test_ik\"/>");
+//}
 
 
 
@@ -631,11 +718,12 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<MoveJoint>();
      plan_root->planPool().add<ReadPosition>();
      plan_root->planPool().add<WalkStep>();
-     plan_root->planPool().add<testIK>();
+     //plan_root->planPool().add<testIK>();
      plan_root->planPool().add<TestMotor>();
      plan_root->planPool().add<PositionCheck>();
      plan_root->planPool().add<CheckEnable>();
      plan_root->planPool().add<RobotPrepare>();
+     plan_root->planPool().add<MoveEnd>();
 
 
     return plan_root;
