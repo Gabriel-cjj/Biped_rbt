@@ -503,14 +503,14 @@ MoveEnd::MoveEnd(const std::string& name)
     aris::core::fromXmlString(command(),
         "<Command name=\"move_end\">"
         "<GroupParam>"
-        //"       <Param name=\"x_left_leg\" default=\"0\" abbreviation=\"x\"/>"
-        //"		<Param name=\"y_left_leg\" default=\"-900\" abbreviation=\"y\"/>"
-        //"		<Param name=\"z_left_leg\" default=\"0\" abbreviation=\"z\"/>"
-        //"       <Param name=\"x_right_leg\" default=\"0\" abbreviation=\"X\"/>"
-        //"		<Param name=\"y_right_leg\" default=\"-900\" abbreviation=\"Y\"/>"
-        //"		<Param name=\"z_right_leg\" default=\"0\" abbreviation=\"Z\"/>"
-        "		<Param name=\"left_end_position_on_foot\" default=\"85\" abbreviation=\"ll\"/>"
-        "		<Param name=\"right_end_position_on_foot\" default=\"85\" abbreviation=\"l\"/>"
+        "       <Param name=\"x_left_leg\" default=\"0\" abbreviation=\"x\"/>"
+        "		<Param name=\"y_left_leg\" default=\"-1131.9101101572\" abbreviation=\"y\"/>"
+        "		<Param name=\"z_left_leg\" default=\"0\" abbreviation=\"z\"/>"
+        "       <Param name=\"x_right_leg\" default=\"0\" abbreviation=\"X\"/>"
+        "		<Param name=\"y_right_leg\" default=\"-1131.9101101572\" abbreviation=\"Y\"/>"
+        "		<Param name=\"z_right_leg\" default=\"0\" abbreviation=\"Z\"/>"
+        "		<Param name=\"left_end_position_on_foot\" default=\"85\" abbreviation=\"l\"/>"
+        "		<Param name=\"right_end_position_on_foot\" default=\"85\" abbreviation=\"L\"/>"
         "</GroupParam>"
         "</Command>");
 
