@@ -1,13 +1,12 @@
-#include"kinematics.h"
-#include<cmath>
-#include<iostream>
-#include<fstream>
+ï»¿#include "kinematics.h"
+#include <cmath>
+#include <iostream>
+#include <fstream>
 
 
 extern double input_angle[10];
 
-
-//ÉíÌåÔÚÍÈ×ø±êÏµÏÂµÄ±ä»»¾ØÕó
+//èº«ä½“åœ¨è…¿åæ ‡ç³»ä¸‹çš„å˜æ¢çŸ©é˜µ
 double cs_of_leg1[16] =
 {
     1, 0, 0, kBodyLong,
@@ -24,10 +23,10 @@ double cs_of_leg2[16] =
 };
 
 
-//¾ØÕó¼ÆËã
+//çŸ©é˜µè®¡ç®—
 void s_inv_pm(const double* pm_in, double* pm_out)
 {
-    //×ªÖÃ
+    //è½¬ç½®
     pm_out[0] = pm_in[0];
     pm_out[1] = pm_in[4];
     pm_out[2] = pm_in[8];
@@ -38,12 +37,12 @@ void s_inv_pm(const double* pm_in, double* pm_out)
     pm_out[9] = pm_in[6];
     pm_out[10] = pm_in[10];
 
-    //Î»ÖÃ
+    //ä½ç½®
     pm_out[3] = -pm_out[0] * pm_in[3] - pm_out[1] * pm_in[7] - pm_out[2] * pm_in[11];
     pm_out[7] = -pm_out[4] * pm_in[3] - pm_out[5] * pm_in[7] - pm_out[6] * pm_in[11];
     pm_out[11] = -pm_out[8] * pm_in[3] - pm_out[9] * pm_in[7] - pm_out[10] * pm_in[11];
 
-    //ÆäËû
+    //å…¶ä»–
     pm_out[12] = 0;
     pm_out[13] = 0;
     pm_out[14] = 0;
@@ -156,13 +155,13 @@ double* s_inv_pp2pp(const double* inv_relative_pm, const double* from_pp, double
     return to_pp;
 }
 
-//ÔË¶¯Ñ§·´½â
+//è¿åŠ¨å­¦åè§£
 
 void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_position_on_foot, double* motion_pos) {
-    //-----ÒÑÖªÊı¾İ-----
-    //L¡¢lÎª³¤
-    //vÎªÏòÁ¿
-    //aÎª½Ç¶È
+    //-----å·²çŸ¥æ•°æ®-----
+    //Lã€lä¸ºé•¿
+    //vä¸ºå‘é‡
+    //aä¸ºè§’åº¦
     const double kLAO = 154.5;
     const double kLAD = 150;
     const double kLCD = 422.02;
@@ -196,9 +195,9 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         a, b, c
     };
 
-    //-----¼ÆËãÊı¾İ-----
+    //-----è®¡ç®—æ•°æ®-----
     double q1 = 0, q2 = 0, q3 = 0, q4 = 0, q5 = 0;
-    double i=0;//ÅĞ¶Ï×óÓÒ£¬0×ó1ÓÒ
+    double i=0;//åˆ¤æ–­å·¦å³ï¼Œ0å·¦1å³
     double x0 = 0, y0 = 0, x1 = 0, y1 = 0;
     double theta1 = 0, theta2 = 0, theta3 = 0, theta4 = 0;
     double a_nop = 0, a_mpn = 0, a_lim = 0, a_eij = 0, a_eik = 0, a_cbe = 0, a_abe = 0, a_abc = 0, a_bac = 0, a_cad = 0, a_bad = 0, a_bae = 0, a_eaf = 0,
@@ -212,8 +211,8 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
 
 
-    //-----Çóq1-----
-    //ÇóÄ©¶ËºÍÏòÁ¿nËùÔÚÆ½ÃæÓëyozÆ½ÃæµÄ½»ÏßµÄ·½³Ì
+    //-----æ±‚q1-----
+    //æ±‚æœ«ç«¯å’Œå‘é‡næ‰€åœ¨å¹³é¢ä¸yozå¹³é¢çš„äº¤çº¿çš„æ–¹ç¨‹
     double v_m[3] =
     {
         y * c - z * b, z * a - x * c, x * b - y * a
@@ -223,7 +222,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     double y_c = v_m[1];
     double z_c = v_m[2];
 
-    //Çóq1
+    //æ±‚q1
     double k = -z_c / y_c;
     theta1 = std::atan(k);
 
@@ -252,16 +251,16 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     }
 
     //-----q2-----
-    //ÅĞ¶ÏÄ©¶ËÔÚ½»ÏßµÄ×ó±ß£¬»¹ÊÇÓÒ±ß
+    //åˆ¤æ–­æœ«ç«¯åœ¨äº¤çº¿çš„å·¦è¾¹ï¼Œè¿˜æ˜¯å³è¾¹
     if (theta1 > 0 && theta1 < PI / 2)
     {
         if (y - k > 0)
         {
-            i = 1;  // ÓÒ±ß
+            i = 1;  // å³è¾¹
         }
         else if (y - k < 0)
         {
-            i = 0;//×ó±ß
+            i = 0;//å·¦è¾¹
         }
         else if (y - k == 0)
         {
@@ -332,7 +331,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         }
     }
 
-    //Çóq2
+    //æ±‚q2
     if (i == 1)
     {
         if (theta1 > 0 && theta1 < PI / 2)
@@ -441,10 +440,10 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     }
 
     //-----q3-----
-    //½«Ä©¶Ë×ø±ê×ª»»ÎªÍÈÆ½Ãæ×ø±ê¡£
-    //ÉèÍÈÉÏµÄËÄ¸ö×ª¶¯¸±×é³ÉµÄÍÈÆ½ÃæÎªÆ½Ãæx0Oy0¡£
-    //µãOÓëÔ­×ø±êÒ»ÖÂ£¬x0ÖáÓëxÖáÒ»ÖÂ£¬
-    //q1Îª0Ê±£¬y0ÖáÓëyÖáÒ»ÖÂ£¬q2²»Îª0Ê±£¬y0ÖáÒÔyÖáÎªÖá£¬×ª¶¯q2ºóµÄĞÂÖá¡£
+    //å°†æœ«ç«¯åæ ‡è½¬æ¢ä¸ºè…¿å¹³é¢åæ ‡ã€‚
+    //è®¾è…¿ä¸Šçš„å››ä¸ªè½¬åŠ¨å‰¯ç»„æˆçš„è…¿å¹³é¢ä¸ºå¹³é¢x0Oy0ã€‚
+    //ç‚¹Oä¸åŸåæ ‡ä¸€è‡´ï¼Œx0è½´ä¸xè½´ä¸€è‡´ï¼Œ
+    //q1ä¸º0æ—¶ï¼Œy0è½´ä¸yè½´ä¸€è‡´ï¼Œq2ä¸ä¸º0æ—¶ï¼Œy0è½´ä»¥yè½´ä¸ºè½´ï¼Œè½¬åŠ¨q2åçš„æ–°è½´ã€‚
     if (q2 == 0)
     {
         x0 = x;
@@ -456,7 +455,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         y0 = -std::sqrt(l_no * l_no - l_np * l_np);
     }
 
-    //Çó½Åõ××ª¶¯¸±×ø±ê£¨x1£¬y1£©
+    //æ±‚è„šè¸è½¬åŠ¨å‰¯åæ ‡ï¼ˆx1ï¼Œy1ï¼‰
     l_qs = a / std::cos(q2);
     l_rs = std::sqrt(l_qs * l_qs - a * a);
     l_or = std::sqrt(b * b + c * c);
@@ -551,7 +550,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         y1 = y0 + l_lm + l_ek;
     }
 
-    //Çóq3
+    //æ±‚q3
     l_ae = std::sqrt(x1 * x1 + (y1 + kLAO) * (y1 + kLAO));
     l_af = -(y1 + kLAO);
     l_ef = std::abs(x1);
@@ -586,7 +585,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     q4 = a_adc - 3.0 / 4.0 * PI;
 
     //-----q5-----
-    //Çó¡ÏGEI
+    //æ±‚âˆ GEI
     a_aec = std::acos((l_ae * l_ae + kLCE * kLCE - l_ac * l_ac) / (2 * l_ae * kLCE));
     a_aeb = std::acos((l_ae * l_ae + kLBE * kLBE - kLAB * kLAB) / (2 * l_ae * kLBE));
     a_aef = std::acos((l_ae * l_ae + x1 * x1 - (y1 + kLAO) * (y1 + kLAO)) / (2 * l_ae * std::abs(x1)));
@@ -677,11 +676,11 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
     a_gei = theta3 + theta4;
 
-    //Çó¡ÏGEI×î´óÖµºÍ×îĞ¡Öµ
+    //æ±‚âˆ GEIæœ€å¤§å€¼å’Œæœ€å°å€¼
     a_gei_b = std::acos((kLEG * kLEG + kLEI * kLEI - (kLGH + kLHI) * (kLGH + kLHI)) / (2 * kLEG * kLEI));
     a_gei_s = std::acos((kLEG * kLEG + (kLEI + kLHI) * (kLEI + kLHI) - kLGH * kLGH) / (2 * kLEG * (kLEI + kLHI)));
 
-    //Çóq5
+    //æ±‚q5
     if (a_gei > a_gei_b)
     {
         a_gei = a_gei_b;
@@ -698,7 +697,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
     q5 = a_egh - kQ50;
 
-    //Êä³ö
+    //è¾“å‡º
     motion_pos[0] = q1;
     motion_pos[1] = q2;
     motion_pos[2] = q3;
@@ -709,10 +708,10 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 }
 
 void ikForBipedRobotforTest(double x, double y, double z, double a, double b, double c, double l, double input[5]) {
-    //-----ÒÑÖªÊı¾İ-----
-    //L¡¢lÎª³¤
-    //vÎªÏòÁ¿
-    //aÎª½Ç¶È
+    //-----å·²çŸ¥æ•°æ®-----
+    //Lã€lä¸ºé•¿
+    //vä¸ºå‘é‡
+    //aä¸ºè§’åº¦
     const double kLAO = 154.5;
     const double kLAD = 150;
     const double kLCD = 422.02;
@@ -738,9 +737,9 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         a, b, c
     };
 
-    //-----¼ÆËãÊı¾İ-----
+    //-----è®¡ç®—æ•°æ®-----
     double q1 = 0, q2 = 0, q3 = 0, q4 = 0, q5 = 0;
-    double i = 0;//ÅĞ¶Ï×óÓÒ£¬0×ó1ÓÒ
+    double i = 0;//åˆ¤æ–­å·¦å³ï¼Œ0å·¦1å³
     double x0 = 0, y0 = 0, x1 = 0, y1 = 0;
     double theta1 = 0, theta2 = 0, theta3 = 0, theta4 = 0;
     double a_nop = 0, a_mpn = 0, a_lim = 0, a_eij = 0, a_eik = 0, a_cbe = 0, a_abe = 0, a_abc = 0, a_bac = 0, a_cad = 0, a_bad = 0, a_bae = 0, a_eaf = 0,
@@ -754,8 +753,8 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
 
 
 
-    //-----Çóq1-----
-    //ÇóÄ©¶ËºÍÏòÁ¿nËùÔÚÆ½ÃæÓëyozÆ½ÃæµÄ½»ÏßµÄ·½³Ì
+    //-----æ±‚q1-----
+    //æ±‚æœ«ç«¯å’Œå‘é‡næ‰€åœ¨å¹³é¢ä¸yozå¹³é¢çš„äº¤çº¿çš„æ–¹ç¨‹
     double v_m[3] =
     {
         y * c - z * b, z * a - x * c, x * b - y * a
@@ -765,7 +764,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     double y_c = v_m[1];
     double z_c = v_m[2];
 
-    //Çóq1
+    //æ±‚q1
     double k = -z_c / y_c;
     theta1 = std::atan(k);
 
@@ -794,16 +793,16 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     }
 
     //-----q2-----
-    //ÅĞ¶ÏÄ©¶ËÔÚ½»ÏßµÄ×ó±ß£¬»¹ÊÇÓÒ±ß
+    //åˆ¤æ–­æœ«ç«¯åœ¨äº¤çº¿çš„å·¦è¾¹ï¼Œè¿˜æ˜¯å³è¾¹
     if (theta1 > 0 && theta1 < PI / 2)
     {
         if (y - k > 0)
         {
-            i = 1;  // ÓÒ±ß
+            i = 1;  // å³è¾¹
         }
         else if (y - k < 0)
         {
-            i = 0;//×ó±ß
+            i = 0;//å·¦è¾¹
         }
         else if (y - k == 0)
         {
@@ -874,7 +873,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         }
     }
 
-    //Çóq2
+    //æ±‚q2
     if (i == 1)
     {
         if (theta1 > 0 && theta1 < PI / 2)
@@ -983,10 +982,10 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     }
 
     //-----q3-----
-    //½«Ä©¶Ë×ø±ê×ª»»ÎªÍÈÆ½Ãæ×ø±ê¡£
-    //ÉèÍÈÉÏµÄËÄ¸ö×ª¶¯¸±×é³ÉµÄÍÈÆ½ÃæÎªÆ½Ãæx0Oy0¡£
-    //µãOÓëÔ­×ø±êÒ»ÖÂ£¬x0ÖáÓëxÖáÒ»ÖÂ£¬
-    //q1Îª0Ê±£¬y0ÖáÓëyÖáÒ»ÖÂ£¬q2²»Îª0Ê±£¬y0ÖáÒÔyÖáÎªÖá£¬×ª¶¯q2ºóµÄĞÂÖá¡£
+    //å°†æœ«ç«¯åæ ‡è½¬æ¢ä¸ºè…¿å¹³é¢åæ ‡ã€‚
+    //è®¾è…¿ä¸Šçš„å››ä¸ªè½¬åŠ¨å‰¯ç»„æˆçš„è…¿å¹³é¢ä¸ºå¹³é¢x0Oy0ã€‚
+    //ç‚¹Oä¸åŸåæ ‡ä¸€è‡´ï¼Œx0è½´ä¸xè½´ä¸€è‡´ï¼Œ
+    //q1ä¸º0æ—¶ï¼Œy0è½´ä¸yè½´ä¸€è‡´ï¼Œq2ä¸ä¸º0æ—¶ï¼Œy0è½´ä»¥yè½´ä¸ºè½´ï¼Œè½¬åŠ¨q2åçš„æ–°è½´ã€‚
     if (q2 == 0)
     {
         x0 = x;
@@ -998,7 +997,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         y0 = -std::sqrt(l_no * l_no - l_np * l_np);
     }
 
-    //Çó½Åõ××ª¶¯¸±×ø±ê£¨x1£¬y1£©
+    //æ±‚è„šè¸è½¬åŠ¨å‰¯åæ ‡ï¼ˆx1ï¼Œy1ï¼‰
     l_qs = a / std::cos(q2);
     l_rs = std::sqrt(l_qs * l_qs - a * a);
     l_or = std::sqrt(b * b + c * c);
@@ -1093,7 +1092,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         y1 = y0 + l_lm + l_ek;
     }
 
-    //Çóq3
+    //æ±‚q3
     l_ae = std::sqrt(x1 * x1 + (y1 + kLAO) * (y1 + kLAO));
     l_af = -(y1 + kLAO);
     l_ef = std::abs(x1);
@@ -1128,7 +1127,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     q4 = a_adc - 3.0 / 4.0 * PI;
 
     //-----q5-----
-    //Çó¡ÏGEI
+    //æ±‚âˆ GEI
     a_aec = std::acos((l_ae * l_ae + kLCE * kLCE - l_ac * l_ac) / (2 * l_ae * kLCE));
     a_aeb = std::acos((l_ae * l_ae + kLBE * kLBE - kLAB * kLAB) / (2 * l_ae * kLBE));
     a_aef = std::acos((l_ae * l_ae + x1 * x1 - (y1 + kLAO) * (y1 + kLAO)) / (2 * l_ae * std::abs(x1)));
@@ -1219,11 +1218,11 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
 
     a_gei = theta3 + theta4;
 
-    //Çó¡ÏGEI×î´óÖµºÍ×îĞ¡Öµ
+    //æ±‚âˆ GEIæœ€å¤§å€¼å’Œæœ€å°å€¼
     a_gei_b = std::acos((kLEG * kLEG + kLEI * kLEI - (kLGH + kLHI) * (kLGH + kLHI)) / (2 * kLEG * kLEI));
     a_gei_s = std::acos((kLEG * kLEG + (kLEI + kLHI) * (kLEI + kLHI) - kLGH * kLGH) / (2 * kLEG * (kLEI + kLHI)));
 
-    //Çóq5
+    //æ±‚q5
     if (a_gei > a_gei_b)
     {
         a_gei = a_gei_b;
@@ -1240,7 +1239,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
 
     q5 = a_egh - kQ50;
 
-    //Êä³ö
+    //è¾“å‡º
     input[0] = q1;
     input[1] = q2;
     input[2] = q3;
@@ -1256,7 +1255,7 @@ auto inverseCalculation(double* leg_in_ground, double* body_in_ground, double* e
     s_pm_dot_inv_pm(cs_of_leg1, body_in_ground, real_pm1);
     s_pm_dot_inv_pm(cs_of_leg2, body_in_ground, real_pm2);
 
-    double xyz_in_leg[6] = { 0 }; //ÍÈÄ©¶ËÔÚÍÈ×ø±êÏµÏÂµÄ±í´ï
+    double xyz_in_leg[6] = { 0 }; //è…¿æœ«ç«¯åœ¨è…¿åæ ‡ç³»ä¸‹çš„è¡¨è¾¾
     s_pp2pp(real_pm1, leg_in_ground + 0 * 3, xyz_in_leg + 0 * 3);
     s_pp2pp(real_pm2, leg_in_ground + 1 * 3, xyz_in_leg + 1 * 3);
 

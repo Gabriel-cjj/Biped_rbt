@@ -3,18 +3,19 @@
 #include<cmath>
 #include<iostream>
 #include"kinematics.h"
+#include "aris.hpp"
 using namespace std;
 
 //行走参数静态变量
-static double foot_position_start_point[6] =
+double foot_position_start_point[6] =
 {
-	-kBodyLong, 0, -kBodyWidth / 2,
-	-kBodyLong, 0, kBodyWidth / 2
+	-kBodyLong, -kBodyHigh, -kBodyWidth / 2,
+	-kBodyLong, -kBodyHigh, kBodyWidth / 2
 };
 static double body_positon_start_point[16] = 
 { 
 	1,0,0,0,
-	0,1,0,kBodyHigh,
+	0,1,0,0,
 	0,0,1,0,
 	0,0,0,1 };
 double end_pointing[6] = 

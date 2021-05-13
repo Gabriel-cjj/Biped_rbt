@@ -9,6 +9,8 @@
 
 #include "kinematics.h"
 
+extern double foot_position_start_point[6];
+
 double input_angle[10] = {0};
 double prepare_position_[10] =
 {
@@ -274,21 +276,21 @@ auto WalkStep::prepareNrt()->void
 auto WalkStep::executeRT()->int
 {
     if (count() == 1)this->master()->logFileRawName("walkStep");
-    static double begin_angle[10];
+    static double begin_angle[10]{0,0,0,0,0,0,0,0,0,0};
     int ret = 1;
 
     if (count() == 1)
     {
-        begin_angle[0] = controller()->motionPool()[0].actualPos();
-        begin_angle[1] = controller()->motionPool()[1].actualPos();
-        begin_angle[2] = controller()->motionPool()[2].actualPos();
-        begin_angle[3] = controller()->motionPool()[3].actualPos();
-        begin_angle[4] = controller()->motionPool()[4].actualPos();
-        begin_angle[5] = controller()->motionPool()[5].actualPos();
-        begin_angle[6] = controller()->motionPool()[6].actualPos();
-        begin_angle[7] = controller()->motionPool()[7].actualPos();
-        begin_angle[8] = controller()->motionPool()[8].actualPos();
-        begin_angle[9] = controller()->motionPool()[9].actualPos();
+        //begin_angle[0] = controller()->motionPool()[0].actualPos();
+        //begin_angle[1] = controller()->motionPool()[1].actualPos();
+        //begin_angle[2] = controller()->motionPool()[2].actualPos();
+        //begin_angle[3] = controller()->motionPool()[3].actualPos();
+        //begin_angle[4] = controller()->motionPool()[4].actualPos();
+        //begin_angle[5] = controller()->motionPool()[5].actualPos();
+        //begin_angle[6] = controller()->motionPool()[6].actualPos();
+        //begin_angle[7] = controller()->motionPool()[7].actualPos();
+        //begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
     }
 
     TCurve s1(v_ / 10, v_);
@@ -447,19 +449,19 @@ auto MoveEnd::prepareNrt()->void
 }
 auto MoveEnd::executeRT()->int
 {
-    static double begin_angle[10];
+    static double begin_angle[10]{0,0,0,0,0,0,0,0,0,0};
     if (count() == 1)
     {
-        begin_angle[0] = controller()->motionPool()[0].actualPos();
-        begin_angle[1] = controller()->motionPool()[1].actualPos();
-        begin_angle[2] = controller()->motionPool()[2].actualPos();
-        begin_angle[3] = controller()->motionPool()[3].actualPos();
-        begin_angle[4] = controller()->motionPool()[4].actualPos();
-        begin_angle[5] = controller()->motionPool()[5].actualPos();
-        begin_angle[6] = controller()->motionPool()[6].actualPos();
-        begin_angle[7] = controller()->motionPool()[7].actualPos();
-        begin_angle[8] = controller()->motionPool()[8].actualPos();
-        begin_angle[9] = controller()->motionPool()[9].actualPos();
+        //begin_angle[0] = controller()->motionPool()[0].actualPos();
+        //begin_angle[1] = controller()->motionPool()[1].actualPos();
+        //begin_angle[2] = controller()->motionPool()[2].actualPos();
+        //begin_angle[3] = controller()->motionPool()[3].actualPos();
+        //begin_angle[4] = controller()->motionPool()[4].actualPos();
+        //begin_angle[5] = controller()->motionPool()[5].actualPos();
+        //begin_angle[6] = controller()->motionPool()[6].actualPos();
+        //begin_angle[7] = controller()->motionPool()[7].actualPos();
+        //begin_angle[8] = controller()->motionPool()[8].actualPos();
+        //begin_angle[9] = controller()->motionPool()[9].actualPos();
 
     }
 
@@ -469,7 +471,14 @@ auto MoveEnd::executeRT()->int
 
 
     ikForBipedRobotforTest(x1_, y1_, z1_, 1, 0, 0, l1_, input_angle + 0 * 5);
-    ikForBipedRobotforTest(x2_, y2_, z2_, 1, 0, 0, l2_, input_angle + 0 * 5);
+    ikForBipedRobotforTest(x2_, y2_, z2_, 1, 0, 0, l2_, input_angle + 1 * 5);
+
+    foot_position_start_point[0] = x1_ - kBodyLong;
+    foot_position_start_point[1] = y1_;
+    foot_position_start_point[2] = z1_ - kBodyWidth / 2;
+    foot_position_start_point[3] = x2_ - kBodyLong;
+    foot_position_start_point[4] = y2_;
+    foot_position_start_point[5] = z2_ + kBodyWidth / 2;
 
     double angle0 = begin_angle[0] - input_angle[4] * s1.getTCurve(count());
     double angle1 = begin_angle[1] + input_angle[3] * s1.getTCurve(count());
@@ -596,17 +605,28 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
     for (aris::Size i = 0; i < 10; ++i)
     {
 #ifdef ARIS_USE_ETHERCAT_SIMULATION
+
+        std::cout << "using simulation" << std::endl;
+
         double pos_offset[10]
         {
             0,0,0,0,0,
             0,0,0,0,0,
         };
 #else
-
+        std::cout << "not using simulation" << std::endl;
         double pos_offset[10]
         {
-            0,0,0,0,0,
-            0,0,0,0,0,
+    0,
+    -0.736742,
+    -0.515609,
+    0.887983,
+    0.798197,
+    -0.123869,
+    -2.88542,
+    2.54521,
+    -0.0645231,
+    2.30749,
         };
 #endif
         double pos_factor[10]
@@ -616,13 +636,13 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double max_pos[10]
         {
-            PI + 1000,          -0.736646 + PI / 4, -0.515561 + 0.3735,  0.8879350 + PI / 4, 0.798149 + PI / 4,
-            -0.123869 + PI / 4, -2.885420 + PI / 2,  2.545210 + 1.1937, -0.0645231 + 2.0269, 3.546180,
+            PI + 1000,  PI / 4,  0.3735,   PI / 4,  PI / 4,
+            PI / 4,     PI / 2,  1.1937,   2.0269,   PI / 4,
         };
         double min_pos[10]
         {
-            -PI - 1000,         -0.736646 - 2.0269, -0.515561 - 1.1937,  0.8879350 - PI / 2, 0.798149 - PI / 4,
-            -0.123869 - PI / 4, -2.885420 - PI / 4,  2.545210 - 0.3735, -0.0645231 - PI / 4, 1.946090,
+            -PI - 1000, - 2.0269,  - 1.1937,   - PI / 2, - PI / 4,
+            PI / 4,     - PI / 4,  - 0.3735,  - PI / 4, -PI/4,
         };
         double max_vel[10]
         {
