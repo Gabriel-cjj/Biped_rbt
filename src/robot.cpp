@@ -11,7 +11,8 @@
 
 extern double foot_position_start_point[6];
 
-double input_angle[10] = {0};
+double current[10] = { 0 };
+double input_angle[10] = { 0 };
 double prepare_position_[10] =
 {
     0,
@@ -271,6 +272,7 @@ auto WalkStep::prepareNrt()->void
 {
     step_ = doubleParam("step");
     v_ = doubleParam("speed");
+    h_ = doubleParam("high");
     for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
 }
 auto WalkStep::executeRT()->int
@@ -295,7 +297,14 @@ auto WalkStep::executeRT()->int
 
     TCurve s1(v_ / 10, v_);
     s1.getCurveParam();
-    EllipseTrajectory e1(0, 100.0, 0, s1);
+    EllipseTrajectory e1(0, h_, 0, s1);
+
+    for (int i = 0; i < 10; i++)
+    {
+        current[i] = this->ecController()->motionPool()[i].actualCur();
+    }
+
+    
 
    
 
@@ -343,6 +352,13 @@ auto WalkStep::executeRT()->int
         //    
         //}
         lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
+
+        //输出电流
+        for (int i = 0; i < 10; i++)
+        {
+            lout() << current[i] << "\t";
+        }
+
     }
    
     double angle0 = begin_angle[0] - input_angle[4];
@@ -384,6 +400,7 @@ WalkStep::WalkStep(const std::string& name)
         "<GroupParam>"
         "       <Param name=\"step\" default=\"1\" abbreviation=\"n\"/>"
         "		<Param name=\"speed\" default=\"0.3\" abbreviation=\"v\"/>"
+        "		<Param name=\"high\" default=\"100\" abbreviation=\"h\"/>"
         "</GroupParam>"
         "</Command>");
 }
@@ -617,7 +634,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         std::cout << "not using simulation" << std::endl;
         double pos_offset[10]
         {
-    0,
+    0.644464,
     -0.736742,
     -0.515609,
     0.887983,
@@ -626,7 +643,7 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
     -2.88542,
     2.54521,
     -0.0645231,
-    2.30749,
+    2.58562,
         };
 #endif
         double pos_factor[10]

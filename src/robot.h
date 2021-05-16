@@ -55,6 +55,7 @@ public:
 private:
     double step_;
     double v_;
+    double h_;
 
 };
 
