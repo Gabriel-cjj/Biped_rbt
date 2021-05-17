@@ -15,22 +15,9 @@ double current[10] = { 0 };
 double input_angle[10] = { 0 };
 double prepare_position_[10] =
 {
-    0,
-    -0.736742,
-    -0.515609,
-    0.887983,
-    0.798197,
-    -0.123869,
-    -2.88542,
-    2.54521,
-    -0.0645231,
-    2.30749,
+    0,0,0,0,0,
+    0,0,0,0,0
 };
-
-////输出参数，模型曲线测试使用
-//double file_current_leg[6];
-//double file_current_body[16];
-//double time_test;
 
 //输出参数，模型曲线测试使用
 extern double file_current_leg[6];
@@ -243,14 +230,6 @@ auto ReadPosition::executeRT()->int
         begin_angle[8] = controller()->motionPool()[8].actualPos();
         begin_angle[9] = controller()->motionPool()[9].actualPos();
 
-
-        //controller()->motionPool()[0].actualPos();
-        //controller()->motionPool()[0].setPosOffset();
-        //controller()->motionPool();
-
-
-
-
     }
 
     for (int i = 0; i < 10; i++)
@@ -265,6 +244,33 @@ ReadPosition::ReadPosition(const std::string& name)
 {
     aris::core::fromXmlString(command(),
         "<Command name=\"read_p\"/>");
+}
+
+//读取电流
+auto ReadCurrent::prepareNrt()->void
+{
+    
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto ReadCurrent::executeRT()->int
+{
+    if (count() == 1)this->master()->logFileRawName("actul_current");
+
+    if (count() == 1)ret = ret - 1;
+
+    for (int i = 0; i < 10; i++)
+    {
+        current[i] = this->ecController()->motionPool()[i].readPdo(0x6077, 0x00, current[i]);
+        lout() << current[i] << "\t";
+    }
+
+    return ret;
+}
+auto ReadCurrent::collectNrt()->void {}
+ReadCurrent::ReadCurrent(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"read_c\"/>");
 }
 
 //原地踏步
@@ -298,15 +304,6 @@ auto WalkStep::executeRT()->int
     TCurve s1(v_ / 10, v_);
     s1.getCurveParam();
     EllipseTrajectory e1(0, h_, 0, s1);
-
-    for (int i = 0; i < 10; i++)
-    {
-        current[i] = this->ecController()->motionPool()[i].actualCur();
-    }
-
-    
-
-   
 
     //步态规划
     ret = forwardBipedRobot(step_, count() - 1, &e1, input_angle);
@@ -354,8 +351,10 @@ auto WalkStep::executeRT()->int
         lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
 
         //输出电流
+
         for (int i = 0; i < 10; i++)
         {
+            current[i] = this->ecController()->motionPool()[i].readPdo(0x6077, 0x00, current[i]);
             lout() << current[i] << "\t";
         }
 
@@ -543,76 +542,7 @@ MoveEnd::MoveEnd(const std::string& name)
     //"<Command name=\"move_end\"/>");
 }
 
-////反解测试
-//auto testIK::prepareNrt()->void
-//{
-//    //x_ = doubleParam("x");
-//    //y_ = doubleParam("y");
-//    //z_ = doubleParam("z");
-//    //a_ = doubleParam("a");
-//    //b_ = doubleParam("b");
-//    //c_ = doubleParam("c");
-//    //l_ = doubleParam("l");
-//    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
-//}
-//auto testIK::executeRT()->int
-//{
-//    //double end_position[3] =
-//    //{
-//    //    65, -1131.9101101572, 0
-//    //};
-//    double end_pointing[3] =
-//    {
-//        1, 0, 0
-//    };
-//    double end_position_on_foot[1] = { 150 };
-//
-//
-//    //ikForBipedRobotforTest(end_position[0], end_position[1], end_position[2], end_pointing[0], end_pointing[1], end_pointing[2], end_position_on_foot, input_angle);
-//
-//    double current_leg_in_ground[3] =
-//    {
-//        -kBodyLong, 0, -kBodyWidth / 2,
-//    };
-//    double current_body_in_ground[3] =
-//    {
-//        file_current_body[3], file_current_body[7], file_current_body[11]
-//    };
-//
-//    inverseCalculation(current_leg_in_ground, current_body_in_ground, end_pointing, end_position_on_foot, input_angle);
-//    
-//    for (int i = 0; i < 6; i++)
-//    {
-//        mout() << input_angle[i] << "\t\n";
-//    }
-//
-//    return 0;
-//}
-//auto testIK::collectNrt()->void {}
-//testIK::testIK(const std::string& name)
-//{
-//    aris::core::fromXmlString(command(),
-//        //"<Command name=\"test_ik\">"
-//        //"       <Param name=\"x\" default=\"1\" abbreviation=\"n\"/>"
-//        //"       <Param name=\"y\" default=\"1\" abbreviation=\"n\"/>"
-//        //"       <Param name=\"z\" default=\"1\" abbreviation=\"n\"/>"
-//        //"       <Param name=\"a\" default=\"1\" abbreviation=\"n\"/>"
-//        //"       <Param name=\"b\" default=\"1\" abbreviation=\"n\"/>"
-//        //"       <Param name=\"l\" default=\"1\" abbreviation=\"n\"/>"
-//        //"</Command>");
-//        "<Command name=\"test_ik\"/>");
-//}
 
-
-
-
-
-
-
-//ARIS_REGISTRATION
-//{
-//    aris::core::class_<MoveJS>("MoveJS").inherit<Plan>();
-//}
 
 
 auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
@@ -658,8 +588,8 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         };
         double min_pos[10]
         {
-            -PI - 1000, - 2.0269,  - 1.1937,   - PI / 2, - PI / 4,
-            PI / 4,     - PI / 4,  - 0.3735,  - PI / 4, -PI/4,
+            -PI - 1000, -2.0269,  -1.1937,   -PI / 2, -PI / 4,
+            -PI / 4,     -PI / 4,  -0.3735,  -PI / 4, -PI / 2,
         };
         double max_vel[10]
         {
@@ -754,6 +684,7 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
     //plan_root->planPool().add<Enable2>();
      plan_root->planPool().add<MoveJoint>();
      plan_root->planPool().add<ReadPosition>();
+     plan_root->planPool().add<ReadCurrent>();
      plan_root->planPool().add<WalkStep>();
      //plan_root->planPool().add<testIK>();
      plan_root->planPool().add<TestMotor>();

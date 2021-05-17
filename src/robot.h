@@ -44,6 +44,21 @@ public:
 
 };
 
+class ReadCurrent : public aris::core::CloneObject<ReadCurrent, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit ReadCurrent(const std::string& name = "ReadCurrent");
+
+private:
+    int ret;
+
+};
+
+
 class WalkStep : public aris::core::CloneObject<WalkStep, aris::plan::Plan>
 {
 public:
