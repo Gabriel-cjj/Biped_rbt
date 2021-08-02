@@ -9,8 +9,8 @@ using namespace std;
 //行走参数静态变量
 double foot_position_start_point[6] =
 {
-	-kBodyLong, -kBodyHigh, -kBodyWidth / 2,
-	-kBodyLong, -kBodyHigh, kBodyWidth / 2
+	-kBodyLong + 82.54606669, -kBodyHigh, -kBodyWidth / 2,
+	-kBodyLong + 82.54606669, -kBodyHigh, kBodyWidth / 2
 };
 static double body_positon_start_point[16] = 
 { 
@@ -23,7 +23,7 @@ double end_pointing[6] =
 	1,0,0,
 	1,0,0
 };
-double end_position_on_foot[2] = { 85,85 };
+double end_position_on_foot[2] = { 85, 85 };
 
 //输出参数，模型曲线测试使用
 double file_current_leg[6] = { 0 };
@@ -162,7 +162,7 @@ auto planBipedRobotLeg(int e_1, int n, double* current_leg, int count, EllipseTr
 	//	}
 	//}
 
-	if (count == 0)//初始化脚的位置，否则24脚初始位置为0
+	if (count == 0)//初始化脚的位置
 	{
 		for (int i = 0; i < 6; i++)
 		{
@@ -339,6 +339,62 @@ auto forwardBipedRobot(int n, int count, EllipseTrajectory* Ellipse, double* inp
 
 	//模型测试使用
 	inverseCalculation(current_leg_in_ground, current_body_in_ground, end_pointing, end_position_on_foot, input);
+
+	return 2 * n * per_step_count - count - 1;
+}
+
+auto forwardBipedRobotForTest(int n, int count, EllipseTrajectory* Ellipse, double* current_body_and_leg)->int
+{
+
+	int per_step_count = Ellipse->getTcurve().getTc() * 1000;
+
+	static double current_leg_in_ground[6] = { 0 };
+	static double current_body_in_ground[48] = { 0 };
+
+	//判断行走状态
+	int e_1 = count / per_step_count;  //判断当前在走哪一步,腿走一步e1加1
+
+	//规划腿
+	planBipedRobotLeg(e_1, n, current_body_and_leg + 16, count % per_step_count, Ellipse);
+	//规划身体
+	planBipedRobotBodyforWalk(e_1, n, current_body_and_leg, count, Ellipse);
+
+	//double leg[3] = { current_body_and_leg[13], current_body_and_leg[14], current_body_and_leg[15] };
+	//current_body_and_leg[13] = 0;
+	//current_body_and_leg[14] = 0;
+	//current_body_and_leg[15] = 0;
+	//current_body_and_leg[16] = leg[0];
+	//current_body_and_leg[17] = leg[1];
+	//current_body_and_leg[18] = leg[2];
+	//current_body_and_leg[19] = 0;
+	//current_body_and_leg[20] = 0;
+	//current_body_and_leg[21] = 0;
+
+	//double ee_pos_leg[32] =
+	//{
+	//	1,0,0,current_body_and_leg[16],
+	//	0,1,0,current_body_and_leg[17],
+	//	0,0,1,current_body_and_leg[18],
+	//	0,0,0,1,
+	//	1,0,0,current_body_and_leg[19],
+	//	0,1,0,current_body_and_leg[20],
+	//	0,0,1,current_body_and_leg[21],
+	//	0,0,0,1,
+	//};
+	double ee_pos_leg[32] =
+	{
+		current_body_and_leg[16],current_body_and_leg[17],current_body_and_leg[18],
+		0,0,0,
+		current_body_and_leg[19],current_body_and_leg[20],current_body_and_leg[21],
+		0,0,0,
+	};
+
+	for (int i = 16; i < 28; i++)
+	{
+		current_body_and_leg[i] = ee_pos_leg[i-16];
+	}
+
+
 
 	return 2 * n * per_step_count - count - 1;
 }

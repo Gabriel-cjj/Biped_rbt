@@ -15,6 +15,16 @@ int main(int argc, char *argv[])
     cs.resetController(robot::createControllerBiped().release());
     cs.resetPlanRoot(robot::createPlanBiped().release());
 
+	cs.resetModel(robot::createModelBiped().release());
+	//------------------adams------------------//
+
+
+	auto& adams = dynamic_cast<aris::dynamic::AdamsSimulator&>(cs.model().simulatorPool().front());
+	adams.saveAdams("C:\\Users\\54067\\Desktop\\Adams-final\\Biped.cmd");
+
+	robot::BipedModel plan;
+	adams.simulate(plan, cs.model().simResultPool().front());
+	adams.saveAdams("C:\\Users\\54067\\Desktop\\Adams-final\\Biped.cmd", cs.model().simResultPool().front());
 
 
     cs.init();

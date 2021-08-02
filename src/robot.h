@@ -21,17 +21,7 @@ constexpr double PI = 3.141592653589793;
 //
 //};
 
-class MoveJoint : public aris::core::CloneObject<MoveJoint, aris::plan::Plan>
-{
-public:
-    auto virtual prepareNrt()->void;
-    auto virtual executeRT()->int;
-    auto virtual collectNrt()->void;
 
-    explicit MoveJoint(const std::string &name = "MoveJiont");
-private:
-    double dir_;
-};
 
 class ReadPosition : public aris::core::CloneObject<ReadPosition, aris::plan::Plan>
 {
@@ -68,9 +58,9 @@ public:
 
     explicit WalkStep(const std::string& name = "WalkStep");
 private:
-    double step_;
-    double v_;
-    double h_;
+    double step_ = 0;
+    double v_ = 0;
+    double h_ = 0;
 
 };
 
@@ -166,7 +156,19 @@ private:
 };
 
 
+// cpp和adams测试 //
+class BipedModel :public aris::core::CloneObject<BipedModel, aris::plan::Plan> {
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int override;
 
+    virtual ~BipedModel();
+    explicit BipedModel(const std::string& name = "biped_model");
+
+};
+
+
+    auto createModelBiped()->std::unique_ptr<aris::dynamic::Model>;  
     auto createControllerBiped()->std::unique_ptr<aris::control::Controller>;
     auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>;
 }

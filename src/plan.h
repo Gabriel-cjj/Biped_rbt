@@ -69,6 +69,8 @@ public:
 
 /***********************函数变量声明***********************/
 auto forwardBipedRobot(int n, int count, EllipseTrajectory* Ellipse, double* input)->int;
+
+auto forwardBipedRobotForTest(int n, int count, EllipseTrajectory* Ellipse, double* current_body_and_leg)->int;
 #endif
 
 

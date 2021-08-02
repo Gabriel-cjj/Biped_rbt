@@ -160,23 +160,42 @@ double* s_inv_pp2pp(const double* inv_relative_pm, const double* from_pp, double
 void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_position_on_foot, double* motion_pos) {
     //-----已知数据-----
     //L、l为长
-    //v为向量
+    //v为向量          
     //a为角度
+    //const double kLAO = 154.5;
+    //const double kLAD = 150;
+    //const double kLCD = 422.02;
+    //const double kLAB = 487.46;
+    //const double kLBC = 88.82;
+    //const double kLBE = 509.51;
+    //const double kLCE = 426.61;
+    //const double kLEG = 326.82;
+    //const double kLHI = 280;
+    //const double kLGH = 120;
+    //const double kLIJ = 85;
+    //const double kLEJ = 40;
+    //const double kLEI = std::sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
+    //const double kQ30 = 2.768114255522946;
+    //const double kQ50 = 1.020376369330288;
+    //const double kQ40 = 3.0 / 4.0 * PI;
+
     const double kLAO = 154.5;
     const double kLAD = 150;
     const double kLCD = 422.02;
-    const double kLAB = 487.46;
-    const double kLBC = 88.82;
-    const double kLBE = 509.51;
+    const double kLAB = 560.92113834;
+    const double kLBC = 176.00866644;
+    const double kLBE = 549.31309270;
     const double kLCE = 426.61;
     const double kLEG = 326.82;
-    const double kLHI = 280;
-    const double kLGH = 120;
+    const double kLHI = 309.99078879;
+    const double kLGH = 65;
     const double kLIJ = 85;
     const double kLEJ = 40;
     const double kLEI = std::sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
-    const double kQ30 = 2.768114255522946;
-    const double kQ50 = 1.020376369330288;
+    const double kQ30 = 151.92 / 180.0 * PI;
+    const double kQ40 = 126.85 / 180.0 * PI;
+    const double kQ50 = 74.1 / 180.0 * PI;
+
 
     double x = ee_xyz_wrt_leg[0];
     double y = ee_xyz_wrt_leg[1];
@@ -577,12 +596,12 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
         a_daf = a_bad - a_bae - a_eaf;
     }
 
-    q3 = PI - a_daf - kQ30;
+    q3 = kQ30 - (PI - a_daf);
 
     //-----q4-----
     a_adc = std::acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
 
-    q4 = a_adc - 3.0 / 4.0 * PI;
+    q4 = a_adc - kQ40;
 
     //-----q5-----
     //求∠GEI
@@ -695,7 +714,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
     a_egi = std::acos((kLEG * kLEG + l_gi * l_gi - kLEI * kLEI) / (2 * kLEG * l_gi));
     a_egh = a_egi + a_hgi;
 
-    q5 = a_egh - kQ50;
+    q5 = kQ50 - a_egh;
 
     //输出
     motion_pos[0] = q1;
@@ -707,6 +726,7 @@ void ikForBipedRobot(double* ee_xyz_wrt_leg, double* end_pointing, double* end_p
 
 }
 
+//测试反解 （未改）
 void ikForBipedRobotforTest(double x, double y, double z, double a, double b, double c, double l, double input[5]) {
     //-----已知数据-----
     //L、l为长
@@ -715,18 +735,19 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     const double kLAO = 154.5;
     const double kLAD = 150;
     const double kLCD = 422.02;
-    const double kLAB = 487.46;
-    const double kLBC = 88.82;
-    const double kLBE = 509.51;
+    const double kLAB = 560.92113834;
+    const double kLBC = 176.00866644;
+    const double kLBE = 549.31309270;
     const double kLCE = 426.61;
     const double kLEG = 326.82;
-    const double kLHI = 280;
-    const double kLGH = 120;
+    const double kLHI = 309.99078879;
+    const double kLGH = 65;
     const double kLIJ = 85;
     const double kLEJ = 40;
-    const double kLEI = sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
-    const double kQ30 = 2.768114255522946;
-    const double kQ50 = 1.020376369330288;
+    const double kLEI = std::sqrt(kLIJ * kLIJ + kLEJ * kLEJ);
+    const double kQ30 = 151.92 / 180.0 * PI;
+    const double kQ40 = 126.85 / 180.0 * PI;
+    const double kQ50 = 74.1 / 180.0 * PI;
 
     double v_om[3] =
     {
@@ -738,13 +759,13 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     };
 
     //-----计算数据-----
-    double q1 = 0, q2 = 0, q3 = 0, q4 = 0, q5 = 0;
-    double i = 0;//判断左右，0左1右
-    double x0 = 0, y0 = 0, x1 = 0, y1 = 0;
-    double theta1 = 0, theta2 = 0, theta3 = 0, theta4 = 0;
-    double a_nop = 0, a_mpn = 0, a_lim = 0, a_eij = 0, a_eik = 0, a_cbe = 0, a_abe = 0, a_abc = 0, a_bac = 0, a_cad = 0, a_bad = 0, a_bae = 0, a_eaf = 0,
-        a_daf = 0, a_adc = 0, a_aec = 0, a_aeb = 0, a_aef = 0, a_bec = 0, a_gei = 0, a_gei_b = 0, a_gei_s = 0, a_hgi = 0, a_egi = 0, a_egh = 0;
-    double l_np = 0, l_qs = 0, l_rs = 0, l_or = 0, l_os = 0, l_lm = 0, l_il = 0, l_ik = 0, l_ek = 0, l_ae = 0, l_af = 0, l_ef = 0, l_ac = 0, l_gi = 0;
+    double q1 = 0.0, q2 = 0.0, q3 = 0.0, q4 = 0.0, q5 = 0.0;
+    int i = 0;//判断左右，0左1右
+    double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;
+    double theta1 = 0.0, theta2 = 0.0, theta3 = 0.0, theta4 = 0.0;
+    double a_nop = 0.0, a_mpn = 0.0, a_lim = 0.0, a_eij = 0.0, a_eik = 0.0, a_cbe = 0.0, a_abe = 0.0, a_abc = 0.0, a_bac = 0.0, a_cad = 0.0, a_bad = 0.0, a_bae = 0.0, a_eaf = 0.0,
+        a_daf = 0.0, a_adc = 0.0, a_aec = 0.0, a_aeb = 0.0, a_aef = 0.0, a_bec = 0.0, a_gei = 0.0, a_gei_b = 0.0, a_gei_s = 0.0, a_hgi = 0.0, a_egi = 0.0, a_egh = 0.0;
+    double l_np = 0.0, l_qs = 0.0, l_rs = 0.0, l_or = 0.0, l_os = 0.0, l_lm = 0.0, l_il = 0.0, l_ik = 0.0, l_ek = 0.0, l_ae = 0.0, l_af = 0.0, l_ef = 0.0, l_ac = 0.0, l_gi = 0.0;
 
     double l_im = l;
     double l_mn = std::abs(x);
@@ -768,102 +789,102 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     double k = -z_c / y_c;
     theta1 = std::atan(k);
 
-    if (theta1 > 0 && theta1 < PI / 2)
+    if (theta1 > 0.0 && theta1 < PI / 2.0)
     {
-        q1 = PI / 2 - theta1;
+        q1 = PI / 2.0 - theta1;
     }
-    else if (theta1 == 0)
+    else if (theta1 == 0.0)
     {
-        if (z > 0)
+        if (z > 0.0)
         {
-            q1 = -PI / 2;
+            q1 = -PI / 2.0;
         }
-        else if (z < 0)
+        else if (z < 0.0)
         {
-            q1 = PI / 2;
+            q1 = PI / 2.0;
         }
     }
-    else if (theta1 > -PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2.0 && theta1 < 0.0)
     {
-        q1 = -theta1 - PI / 2;
+        q1 = -theta1 - PI / 2.0;
     }
-    else if (theta1 == PI / 2 || theta1 == -PI / 2)
+    else if (theta1 == PI / 2.0 || theta1 == -PI / 2.0)
     {
-        q1 = 0;
+        q1 = 0.0;
     }
 
     //-----q2-----
     //判断末端在交线的左边，还是右边
-    if (theta1 > 0 && theta1 < PI / 2)
+    if (theta1 > 0.0 && theta1 < PI / 2.0)
     {
-        if (y - k > 0)
+        if (y - k > 0.0)
         {
             i = 1;  // 右边
         }
-        else if (y - k < 0)
+        else if (y - k < 0.0)
         {
             i = 0;//左边
         }
-        else if (y - k == 0)
+        else if (y - k == 0.0)
         {
-            q2 = 0;
+            q2 = 0.0;
         }
     }
-    else if (theta1 == 0)
+    else if (theta1 == 0.0)
     {
-        if (q1 == PI / 2)
+        if (q1 == PI / 2.0)
         {
-            if (y > 0)
+            if (y > 0.0)
             {
                 i = 1;
             }
-            else if (y < 0)
+            else if (y < 0.0)
             {
-                i = 0;
+                i = 0.0;
             }
-            else if (y == 0)
+            else if (y == 0.0)
             {
-                q2 = 0;
+                q2 = 0.0;
             }
         }
-        else if (q1 == -PI / 2)
+        else if (q1 == -PI / 2.0)
         {
-            if (y > 0)
+            if (y > 0.0)
             {
                 i = 0;
             }
-            else if (y < 0)
+            else if (y < 0.0)
             {
                 i = 1;
             }
-            else if (y == 0)
+            else if (y == 0.0)
             {
-                q2 = 0;
+                q2 = 0.0;
             }
         }
     }
-    else if (theta1 > -PI / 2 && theta1 < 0)
+    else if (theta1 > -PI / 2.0 && theta1 < 0.0)
     {
-        if (y - k > 0)
+        if (y - k > 0.0)
         {
             i = 0;
         }
-        else if (y - k < 0)
+        else if (y - k < 0.0)
         {
             i = 1;
         }
-        else if (y - k == 0)
+        else if (y - k == 0.0)
         {
-            q2 = 0;
+            q2 = 0.0;
         }
     }
-    else if (theta1 == PI / 2 || theta1 == -PI / 2)
+    else if (theta1 == PI / 2.0 || theta1 == -PI / 2.0)
     {
-        if (z > 0)
+        if (z > 0.0)
         {
             i = 0;
         }
-        else if (z < 0)
+        else if (z < 0.0)
         {
             i = 1;
         }
@@ -1119,7 +1140,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
         a_daf = a_bad - a_bae - a_eaf;
     }
 
-    q3 = PI - a_daf - kQ30;
+    q3 = kQ30 - (PI - a_daf);
 
     //-----q4-----
     a_adc = std::acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
@@ -1237,7 +1258,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     a_egi = std::acos((kLEG * kLEG + l_gi * l_gi - kLEI * kLEI) / (2 * kLEG * l_gi));
     a_egh = a_egi + a_hgi;
 
-    q5 = a_egh - kQ50;
+    q5 = kQ50 - a_egh;
 
     //输出
     input[0] = q1;

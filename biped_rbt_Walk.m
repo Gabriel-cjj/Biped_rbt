@@ -59,3 +59,5 @@ subplot(339);
 plot(t,z1,'r',t,z2,'b',t,z,'y');
 
 
+
+
