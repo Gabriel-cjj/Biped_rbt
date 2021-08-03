@@ -155,20 +155,22 @@ private:
 
 };
 
+//
+//// cpp和adams测试 //
+//class BipedModel :public aris::core::CloneObject<BipedModel, aris::plan::Plan> {
+//public:
+//    auto virtual prepareNrt()->void;
+//    auto virtual executeRT()->int override;
+//
+//    virtual ~BipedModel();
+//    explicit BipedModel(const std::string& name = "biped_model");
+//
+//};
+//
+//
+//    auto createModelBiped()->std::unique_ptr<aris::dynamic::Model>;  
 
-// cpp和adams测试 //
-class BipedModel :public aris::core::CloneObject<BipedModel, aris::plan::Plan> {
-public:
-    auto virtual prepareNrt()->void;
-    auto virtual executeRT()->int override;
 
-    virtual ~BipedModel();
-    explicit BipedModel(const std::string& name = "biped_model");
-
-};
-
-
-    auto createModelBiped()->std::unique_ptr<aris::dynamic::Model>;  
     auto createControllerBiped()->std::unique_ptr<aris::control::Controller>;
     auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>;
 }
