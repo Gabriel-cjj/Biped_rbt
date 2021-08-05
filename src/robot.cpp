@@ -15,8 +15,16 @@ double current[10] = { 0 };
 double input_angle[10] = { 0 };
 double prepare_position_[10] =
 {
-    0,0,0,0,0,
-    0,0,0,0,0
+    0,
+    (180 - 126.85) / 180.0 * PI,
+    (180 - 151.92) / 180.0 * PI,
+    0,
+    0,
+    0,
+    0,
+    (180 - 151.92) / 180.0 * PI,
+    (180 - 126.85) / 180.0 * PI,
+    0
 };
 
 double current_body_and_leg[26] = {
@@ -1149,7 +1157,7 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<CheckEnable>();
      plan_root->planPool().add<RobotPrepare>();
      plan_root->planPool().add<MoveEnd>();
-     plan_root->planPool().add<BipedModel>();
+     //plan_root->planPool().add<BipedModel>();
      
 
     return plan_root;
