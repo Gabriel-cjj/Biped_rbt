@@ -328,9 +328,9 @@ auto WalkStep::executeRT()->int
         angle5, angle6, angle7, angle8, angle9
     };
     
-    model()->getInputPos(input_angle_model);
+    //model()->getInputPos(input_angle_model);
 
-    model()->setTime(0.001 * count());
+    //model()->setTime(0.001 * count());
     
 
     //发送电机角度
@@ -1020,14 +1020,14 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
         double pos_offset[10]
         {
              0.644464,
-            -0.736742,
-            -0.515609,
-             0.887983,
-             0.798197,
-            -0.123869,
-            -2.88542,
-             2.54521,
-            -0.0645231,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
              2.58562,
             //  0.389823,
             //-0.205458,
@@ -1043,18 +1043,18 @@ auto createControllerBiped()->std::unique_ptr<aris::control::Controller>
 #endif
         double pos_factor[10]
         {
-             131072.0 / 2 / PI, 131072.0 / 2 / PI,  131072.0 / 2 / PI,  131072.0 / 2 / PI, 131072.0 / 2 / PI,
-             131072.0 / 2 / PI, 131072.0 / 2 / PI,  131072.0 / 2 / PI,  131072.0 / 2 / PI, 131072.0 / 2 / PI
+             131072.0 / 2 / PI,  131072.0 / 2 / PI,  -131072.0 / 2 / PI,  -131072.0 / 2 / PI, -131072.0 / 2 / PI,
+            -131072.0 / 2 / PI, -131072.0 / 2 / PI,   131072.0 / 2 / PI,  -131072.0 / 2 / PI, -131072.0 / 2 / PI
         };
         double max_pos[10]
         {
-            PI + 1000,  PI / 4,  0.3735,   PI / 4,  PI / 4,
-            PI / 4,     PI / 2,  1.1937,   2.0269,   PI / 4,
+            PI + 1000,  0,       PI / 2,   PI / 2,  PI / 4,
+            PI / 4,     PI / 2,  PI / 2,   0,       PI + 1000,
         };
         double min_pos[10]
         {
-            -PI - 1000, -2.0269,  -1.1937,   -PI / 2, -PI / 4,
-            -PI / 4,     -PI / 4,  -0.3735,  -PI / 4, -PI / 2,
+            -PI - 1000, -PI * 3 / 4,  0,  -PI / 2,     -PI / 4,
+            -PI / 4,    -PI / 2,      0,  -PI * 3 / 4, -PI - 1000,
         };
         double max_vel[10]
         {
