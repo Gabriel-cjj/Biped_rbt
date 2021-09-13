@@ -75,19 +75,19 @@ auto PositionCheck::executeRT()->int
     if (begin_angle[6] > 0)
     {
         begin_angle[6] = begin_angle[6] - 2 * PI;
-        controller()->motionPool()[5].setPosOffset(-2 * PI);
+        controller()->motionPool()[6].setPosOffset(-2 * PI);
     }
 
     if (begin_angle[7] < 0)
     {
         begin_angle[7] = begin_angle[7] + 2 * PI;
-        controller()->motionPool()[6].setPosOffset(+2 * PI);
+        controller()->motionPool()[7].setPosOffset(-2 * PI);
     }
 
     if (begin_angle[9] < 0)
     {
         begin_angle[9] = begin_angle[9] + 2 * PI;
-        controller()->motionPool()[6].setPosOffset(+2 * PI);
+        controller()->motionPool()[9].setPosOffset(-2 * PI);
     }
 
     return 0;
@@ -270,6 +270,21 @@ auto WalkStep::executeRT()->int
     static double begin_angle[10]{ 0,0,0,0,0,0,0,0,0,0 };
     int ret = 1;
 
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
+
+    }
+
     TCurve s1(v_ / 10, v_);
     s1.getCurveParam();
     EllipseTrajectory e1(0, h_, 0, s1);
@@ -425,31 +440,29 @@ auto MoveEnd::executeRT()->int
     static double begin_angle[10]{0,0,0,0,0,0,0,0,0,0};
     if (count() == 1)
     {
-        //begin_angle[0] = controller()->motionPool()[0].actualPos();
-        //begin_angle[1] = controller()->motionPool()[1].actualPos();
-        //begin_angle[2] = controller()->motionPool()[2].actualPos();
-        //begin_angle[3] = controller()->motionPool()[3].actualPos();
-        //begin_angle[4] = controller()->motionPool()[4].actualPos();
-        //begin_angle[5] = controller()->motionPool()[5].actualPos();
-        //begin_angle[6] = controller()->motionPool()[6].actualPos();
-        //begin_angle[7] = controller()->motionPool()[7].actualPos();
-        //begin_angle[8] = controller()->motionPool()[8].actualPos();
-        //begin_angle[9] = controller()->motionPool()[9].actualPos();
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
 
     }
 
     TCurve s1(0.016, 0.3);
     s1.getCurveParam();
 
-
-
     ikForBipedRobotforTest(x1_, y1_, z1_, 1, 0, 0, l1_, input_angle + 0 * 5);
     ikForBipedRobotforTest(x2_, y2_, z2_, 1, 0, 0, l2_, input_angle + 1 * 5);
 
-    foot_position_start_point[0] = x1_ - kBodyLong;
+    foot_position_start_point[0] = x1_ - kBodyLong + 82.54606669;
     foot_position_start_point[1] = y1_;
     foot_position_start_point[2] = z1_ - kBodyWidth / 2;
-    foot_position_start_point[3] = x2_ - kBodyLong;
+    foot_position_start_point[3] = x2_ - kBodyLong + 82.54606669;
     foot_position_start_point[4] = y2_;
     foot_position_start_point[5] = z2_ + kBodyWidth / 2;
 
@@ -523,6 +536,128 @@ MoveEnd::MoveEnd(const std::string& name)
         "</Command>");
 
     //"<Command name=\"move_end\"/>");
+}
+
+//前进
+auto WalkForward::prepareNrt()->void
+{
+    step_ = doubleParam("step");
+    v_ = doubleParam("speed");
+    h_ = doubleParam("high");
+    l_ = doubleParam("long");
+    for (auto& m : motorOptions()) m = aris::plan::Plan::NOT_CHECK_ENABLE;
+}
+auto WalkForward::executeRT()->int
+{
+    if (count() == 1)this->master()->logFileRawName("WalkForward");
+    static double begin_angle[10]{ 0,0,0,0,0,0,0,0,0,0 };
+    int ret = 1;
+
+    if (count() == 1)
+    {
+        begin_angle[0] = controller()->motionPool()[0].actualPos();
+        begin_angle[1] = controller()->motionPool()[1].actualPos();
+        begin_angle[2] = controller()->motionPool()[2].actualPos();
+        begin_angle[3] = controller()->motionPool()[3].actualPos();
+        begin_angle[4] = controller()->motionPool()[4].actualPos();
+        begin_angle[5] = controller()->motionPool()[5].actualPos();
+        begin_angle[6] = controller()->motionPool()[6].actualPos();
+        begin_angle[7] = controller()->motionPool()[7].actualPos();
+        begin_angle[8] = controller()->motionPool()[8].actualPos();
+        begin_angle[9] = controller()->motionPool()[9].actualPos();
+
+    }
+
+    TCurve s1(v_ / 10, v_);
+    s1.getCurveParam();
+    EllipseTrajectory e1(l_, h_, 0, s1);
+
+    //步态规划
+    ret = forwardBipedRobot(step_, count() - 1, &e1, input_angle);
+
+    if (count() == 1)
+    {
+        mout() << time_test << "\n";
+        std::cout << s1.getTc() << std::endl;
+    }
+
+
+
+    //输出角度，用于仿真测试
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            lout() << input_angle[i] << "\t";
+        }
+        time_test += 0.001;
+        lout() << time_test << "\t";
+
+        //输出身体和足尖曲线
+        for (int j = 0; j < 6; j++)
+        {
+            lout() << file_current_leg[j] << "\t";
+        }
+
+        lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
+
+        ////输出电流
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    current[i] = this->ecController()->motionPool()[i].readPdo(0x6077, 0x00, current[i]);
+        //    lout() << current[i] << "\t" << std::endl;
+        //}
+
+    }
+
+    double angle0 = begin_angle[0] + input_angle[4];
+    double angle1 = begin_angle[1] + input_angle[3];
+    double angle2 = begin_angle[2] + input_angle[2];
+    double angle3 = begin_angle[3] + input_angle[1];
+    double angle4 = begin_angle[4] + input_angle[0];
+    double angle5 = begin_angle[5] + input_angle[5];
+    double angle6 = begin_angle[6] + input_angle[6];
+    double angle7 = begin_angle[7] + input_angle[7];
+    double angle8 = begin_angle[8] + input_angle[8];
+    double angle9 = begin_angle[9] + input_angle[9];
+
+    double input_angle_model[10] =
+    {
+        angle0, angle1, angle2, angle3, angle4,
+        angle5, angle6, angle7, angle8, angle9
+    };
+
+    //model()->getInputPos(input_angle_model);
+
+    //model()->setTime(0.001 * count());
+
+
+    //发送电机角度
+    controller()->motionPool()[0].setTargetPos(angle0);
+    controller()->motionPool()[1].setTargetPos(angle1);
+    controller()->motionPool()[2].setTargetPos(angle2);
+    controller()->motionPool()[3].setTargetPos(angle3);
+    controller()->motionPool()[4].setTargetPos(angle4);
+    controller()->motionPool()[5].setTargetPos(angle5);
+    controller()->motionPool()[6].setTargetPos(angle6);
+    controller()->motionPool()[7].setTargetPos(angle7);
+    controller()->motionPool()[8].setTargetPos(angle8);
+    controller()->motionPool()[9].setTargetPos(angle9);
+
+    if (ret == 0)std::cout << count() << std::endl;
+    return ret;
+}
+auto WalkForward::collectNrt()->void {}
+WalkForward::WalkForward(const std::string& name)
+{
+    aris::core::fromXmlString(command(),
+        "<Command name=\"walk_step\">"
+        "<GroupParam>"
+        "       <Param name=\"step\" default=\"1\" abbreviation=\"n\"/>"
+        "		<Param name=\"speed\" default=\"0.3\" abbreviation=\"v\"/>"
+        "		<Param name=\"high\" default=\"100\" abbreviation=\"h\"/>"
+        "		<Param name=\"long\" default=\"100\" abbreviation=\"l\"/>"
+        "</GroupParam>"
+        "</Command>");
 }
 
 
@@ -1192,6 +1327,7 @@ auto createPlanBiped()->std::unique_ptr<aris::plan::PlanRoot>
      plan_root->planPool().add<RobotPrepare>();
      plan_root->planPool().add<MoveEnd>();
      //plan_root->planPool().add<BipedModel>();
+     plan_root->planPool().add<WalkForward>();
      
 
     return plan_root;

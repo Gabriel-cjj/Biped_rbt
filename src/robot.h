@@ -155,6 +155,22 @@ private:
 
 };
 
+class WalkForward : public aris::core::CloneObject<WalkForward, aris::plan::Plan>
+{
+public:
+    auto virtual prepareNrt()->void;
+    auto virtual executeRT()->int;
+    auto virtual collectNrt()->void;
+
+    explicit WalkForward(const std::string& name = "WalkForward");
+private:
+    double step_ = 0;
+    double v_ = 0;
+    double h_ = 0;
+    double l_ = 0;
+
+};
+
 //
 //// cpp和adams测试 //
 //class BipedModel :public aris::core::CloneObject<BipedModel, aris::plan::Plan> {

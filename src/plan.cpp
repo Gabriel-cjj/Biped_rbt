@@ -23,7 +23,7 @@ double end_pointing[6] =
 	1,0,0,
 	1,0,0
 };
-double end_position_on_foot[2] = { 85, 85 };
+double end_position_on_foot[2] = { 85, 85 };  
 
 //输出参数，模型曲线测试使用
 double file_current_leg[6] = { 0 };
@@ -114,53 +114,6 @@ auto EllipseTrajectory::getEllipseTrajectory(int count)->void
 //#注意：目前只适用于平地行走
 auto planBipedRobotLeg(int e_1, int n, double* current_leg, int count, EllipseTrajectory* Ellipse)->void
 {
-	//if (count == 0)//初始化脚的位置
-	//{
-	//	for (int i = 0; i < 6; i++)
-	//	{
-	//		current_leg[i] = foot_position_start_point[i];
-	//	}
-	//}
-	//Ellipse->getEllipseTrajectory(count);
-
-	//if (e_1 % 2 == 0)  //1迈腿2停
-	//{
-	//	if (e_1 == 0)   //加速段
-	//	{
-	//		current_leg[0] = foot_position_start_point[0] + Ellipse->get_x() / 2;
-	//		current_leg[1] = foot_position_start_point[1] + Ellipse->get_y();
-	//		current_leg[2] = foot_position_start_point[2] + Ellipse->get_z() / 2;
-	//	}
-	//	else
-	//	{
-	//		current_leg[0] = foot_position_start_point[0] + Ellipse->get_x();
-	//		current_leg[1] = foot_position_start_point[1] + Ellipse->get_y();
-	//		current_leg[2] = foot_position_start_point[2] + Ellipse->get_z();
-	//	}
-	//}
-	//else if (e_1 % 2 == 1)  //2迈腿1停
-	//{
-	//	if (e_1 == 2 * n - 1)//减速段
-	//	{
-	//		current_leg[3] = foot_position_start_point[3] + Ellipse->get_x() / 2;
-	//		current_leg[4] = foot_position_start_point[4] + Ellipse->get_y();
-	//		current_leg[5] = foot_position_start_point[5] + Ellipse->get_z() / 2;
-	//	}
-	//	else
-	//	{
-	//		current_leg[3] = foot_position_start_point[3] + Ellipse->get_x();
-	//		current_leg[4] = foot_position_start_point[4] + Ellipse->get_y();
-	//		current_leg[5] = foot_position_start_point[5] + Ellipse->get_z();
-	//	}
-	//}
-
-	//if (count + 1 == floor(Ellipse->getTcurve().getTc() * 1000))
-	//{
-	//	for (int i = 0; i < 6; i++)
-	//	{
-	//		foot_position_start_point[i] = current_leg[i];
-	//	}
-	//}
 
 	if (count == 0)//初始化脚的位置
 	{
