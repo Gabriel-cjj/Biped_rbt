@@ -15,16 +15,16 @@ double current[10] = { 0 };
 double input_angle[10] = { 0 };
 double prepare_position_[10] =
 {
-    0,
-    (180 - 126.85) / 180.0 * PI,
+    (90 - 74.1) / 180.0 * PI,
+    -(180 - 126.85) / 180.0 * PI,
     (180 - 151.92) / 180.0 * PI,
     0,
     0,
     0,
     0,
     (180 - 151.92) / 180.0 * PI,
-    (180 - 126.85) / 180.0 * PI,
-    0
+    -(180 - 126.85) / 180.0 * PI,
+    (90 - 74.1) / 180.0 * PI
 };
 
 double current_body_and_leg[26] = {
@@ -267,7 +267,7 @@ auto WalkStep::prepareNrt()->void
 auto WalkStep::executeRT()->int
 {
     if (count() == 1)this->master()->logFileRawName("walkStep");
-    static double begin_angle[10]{ 0,0,0,0,0,0,0,0,0,0 };
+    static double begin_angle[10];
     int ret = 1;
 
     if (count() == 1)
@@ -282,6 +282,21 @@ auto WalkStep::executeRT()->int
         begin_angle[7] = controller()->motionPool()[7].actualPos();
         begin_angle[8] = controller()->motionPool()[8].actualPos();
         begin_angle[9] = controller()->motionPool()[9].actualPos();
+
+        {
+            lout() << "q1_l" << "\t";
+            lout() << "q2_l" << "\t";
+            lout() << "q3_l" << "\t";
+            lout() << "q4_l" << "\t";
+            lout() << "q5_l" << "\t";
+            lout() << "q1_r" << "\t";
+            lout() << "q2_r" << "\t";
+            lout() << "q3_r" << "\t";
+            lout() << "q4_r" << "\t";
+            lout() << "q5_r" << "\t";
+            lout() << "time" << std::endl;
+        }
+
 
     }
 
@@ -309,13 +324,13 @@ auto WalkStep::executeRT()->int
         time_test += 0.001;
         lout() << time_test << "\t";
 
-        //输出身体和足尖曲线
-        for (int j = 0; j < 6; j++)
-        {
-            lout() << file_current_leg[j] << "\t";
-        }
+        ////输出身体和足尖曲线
+        //for (int j = 0; j < 6; j++)
+        //{
+        //    lout() << file_current_leg[j] << "\t";
+        //}
 
-        lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
+        //lout() << file_current_body[3] << "\t" << file_current_body[7] << "\t" << file_current_body[11] << std::endl;
 
         ////输出电流
         //for (int i = 0; i < 10; i++)
@@ -323,6 +338,8 @@ auto WalkStep::executeRT()->int
         //    current[i] = this->ecController()->motionPool()[i].readPdo(0x6077, 0x00, current[i]);
         //    lout() << current[i] << "\t" << std::endl;
         //}
+
+        lout() << std::endl;
 
     }
 
@@ -349,16 +366,16 @@ auto WalkStep::executeRT()->int
     
 
     //发送电机角度
-    controller()->motionPool()[0].setTargetPos(angle0);
-    controller()->motionPool()[1].setTargetPos(angle1);
-    controller()->motionPool()[2].setTargetPos(angle2);
-    controller()->motionPool()[3].setTargetPos(angle3);
-    controller()->motionPool()[4].setTargetPos(angle4);
-    controller()->motionPool()[5].setTargetPos(angle5);
-    controller()->motionPool()[6].setTargetPos(angle6);
-    controller()->motionPool()[7].setTargetPos(angle7);
-    controller()->motionPool()[8].setTargetPos(angle8);
-    controller()->motionPool()[9].setTargetPos(angle9);
+    //controller()->motionPool()[0].setTargetPos(angle0);
+    //controller()->motionPool()[1].setTargetPos(angle1);
+    //controller()->motionPool()[2].setTargetPos(angle2);
+    //controller()->motionPool()[3].setTargetPos(angle3);
+    //controller()->motionPool()[4].setTargetPos(angle4);
+    //controller()->motionPool()[5].setTargetPos(angle5);
+    //controller()->motionPool()[6].setTargetPos(angle6);
+    //controller()->motionPool()[7].setTargetPos(angle7);
+    //controller()->motionPool()[8].setTargetPos(angle8);
+    //controller()->motionPool()[9].setTargetPos(angle9);
 
     if (ret == 0)std::cout << count() << std::endl;
     return ret;
@@ -437,7 +454,7 @@ auto MoveEnd::prepareNrt()->void
 }
 auto MoveEnd::executeRT()->int
 {
-    static double begin_angle[10]{0,0,0,0,0,0,0,0,0,0};
+    static double begin_angle[10];
     if (count() == 1)
     {
         begin_angle[0] = controller()->motionPool()[0].actualPos();
@@ -466,15 +483,15 @@ auto MoveEnd::executeRT()->int
     foot_position_start_point[4] = y2_;
     foot_position_start_point[5] = z2_ + kBodyWidth / 2;
 
-    double angle0 = begin_angle[0] - input_angle[4] * s1.getTCurve(count());
+    double angle0 = begin_angle[0] + input_angle[4] * s1.getTCurve(count());
     double angle1 = begin_angle[1] + input_angle[3] * s1.getTCurve(count());
     double angle2 = begin_angle[2] + input_angle[2] * s1.getTCurve(count());
     double angle3 = begin_angle[3] + input_angle[1] * s1.getTCurve(count());
     double angle4 = begin_angle[4] + input_angle[0] * s1.getTCurve(count());
     double angle5 = begin_angle[5] + input_angle[5] * s1.getTCurve(count());
     double angle6 = begin_angle[6] + input_angle[6] * s1.getTCurve(count());
-    double angle7 = begin_angle[7] - input_angle[7] * s1.getTCurve(count());
-    double angle8 = begin_angle[8] - input_angle[8] * s1.getTCurve(count());
+    double angle7 = begin_angle[7] + input_angle[7] * s1.getTCurve(count());
+    double angle8 = begin_angle[8] + input_angle[8] * s1.getTCurve(count());
     double angle9 = begin_angle[9] + input_angle[9] * s1.getTCurve(count());
 
     //输出角度，用于仿真测试

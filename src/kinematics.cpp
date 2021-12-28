@@ -1145,7 +1145,7 @@ void ikForBipedRobotforTest(double x, double y, double z, double a, double b, do
     //-----q4-----
     a_adc = std::acos((kLAD * kLAD + kLCD * kLCD - l_ac * l_ac) / (2 * kLAD * kLCD));
 
-    q4 = a_adc - 3.0 / 4.0 * PI;
+    q4 = a_adc - kQ40;
 
     //-----q5-----
     //求∠GEI
